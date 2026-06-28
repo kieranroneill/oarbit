@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { ChatStreamEventTypeEnum, MessageRoleEnum } from '@/enums/chat';
 
 // services
-import APIService from '@/services/APIService';
+import ChatAPIService from '@/services/APIService';
 
 // types
 import type { PendingContentEntry, UseChatSessionState } from './types';
@@ -70,7 +70,7 @@ export default function useChatSession(): UseChatSessionState {
     async (message: ChatMessage) => {
       const controller = new AbortController();
       const pendingContentMap = new Map<string, string>();
-      let apiService: APIService;
+      let apiService: ChatAPIService;
       let revealTimer: ReturnType<typeof setInterval> | null = null;
       let stream: AsyncGenerator<ChatStreamEvent>;
 
@@ -81,7 +81,7 @@ export default function useChatSession(): UseChatSessionState {
       abortRef.current = controller;
 
       try {
-        apiService = new APIService();
+        apiService = new ChatAPIService();
         stream = apiService.streamChat(
           {
             content: message.content,

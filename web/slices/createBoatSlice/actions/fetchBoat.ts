@@ -1,5 +1,5 @@
 // services
-import APIService from '@/services/APIService';
+import BoatAPIService from '@/services/BoatAPIService';
 
 // types
 import type { BoatContext } from '@/types/boat';
@@ -8,7 +8,9 @@ import type { ActionOptions } from '@/types/store';
 export default function fetchBoat({ api, logger }: ActionOptions): () => Promise<void> {
   return async () => {
     const __functionName = 'fetchBoat';
-    const apiService = new APIService();
+    const apiService = new BoatAPIService({
+      logger,
+    });
     let boat: BoatContext;
 
     api.setState((state) => ({
@@ -18,7 +20,7 @@ export default function fetchBoat({ api, logger }: ActionOptions): () => Promise
 
     try {
       // TODO: pass from somewhere
-      boat = await apiService.getBoat('cc7dc1c4-fe1d-47af-bce2-c3adb40eb1d0');
+      boat = await apiService.getBoatByID('cc7dc1c4-fe1d-47af-bce2-c3adb40eb1d0');
 
       logger.debug(`${__functionName}:`, boat);
 

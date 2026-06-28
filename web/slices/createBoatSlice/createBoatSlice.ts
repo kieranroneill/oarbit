@@ -2,26 +2,24 @@
 import { fetchBoat } from './actions';
 
 // types
-import type { ActionOptions, StateCreator } from '@/types/store';
+import type { ActionOptions, SliceOptions, StateCreator } from '@/types/store';
 import type { Slice } from './types';
 
-// utilities
-import { createLogger } from '@/utilities/logging';
+const createBoatSlice: (options: SliceOptions) => StateCreator<Slice> =
+  ({ logger }) =>
+  (setState, getState) => {
+    const actionOptions: ActionOptions = {
+      api: { getState, setState },
+      logger,
+    };
 
-const createBoatSlice: StateCreator<Slice> = (setState, getState) => {
-  console.log(getState());
-  const apiOptions: ActionOptions = {
-    api: { getState, setState },
-    logger: createLogger(),
+    return {
+      // actions
+      fetchBoat: fetchBoat(actionOptions),
+      // state
+      boat: null,
+      fetchingBoat: false,
+    };
   };
-
-  return {
-    // actions
-    fetchBoat: fetchBoat(apiOptions),
-    // state
-    boat: null,
-    fetchingBoat: false,
-  };
-};
 
 export default createBoatSlice;

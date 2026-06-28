@@ -3,7 +3,7 @@ import { ErrorCodeEnum } from '@/enums/common';
 
 export default abstract class BaseError extends Error {
   // private
-  private readonly __isBoatAssistantError = true;
+  private readonly __isOarbitError = true;
   // public
   public readonly code: ErrorCodeEnum;
   public readonly displayName: string;
@@ -13,7 +13,7 @@ export default abstract class BaseError extends Error {
     super(message.toLowerCase());
   }
 
-  public isBoatAssistantError(): boolean {
-    return this.__isBoatAssistantError;
+  public isOarbitError(): boolean {
+    return this.__isOarbitError;
   }
 }

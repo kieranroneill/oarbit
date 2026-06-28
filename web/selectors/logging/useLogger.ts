@@ -1,6 +1,6 @@
 'use client';
-// hooks
-import useStore from '@/hooks/useStore';
+// enums
+import { LogLevelEnum } from '@/enums/logging';
 
 // types
 import type { Logger } from '@/types/logging';
@@ -9,7 +9,5 @@ import type { Logger } from '@/types/logging';
 import { createLogger } from '@/utilities/logging';
 
 export default function useLogger(): Logger {
-  const logLevel = useStore(({ logLevel }) => logLevel);
-
-  return createLogger(logLevel);
+  return createLogger((process.env.NEXT_PUBLIC_LOG_LEVEL as LogLevelEnum) ?? LogLevelEnum.Error);
 }

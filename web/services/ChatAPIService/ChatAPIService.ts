@@ -4,11 +4,13 @@ import { RouteEnum } from '@/enums/api';
 // mock data
 import { mockSessionDetail, mockSessions } from './mock-data';
 
+// services
+import BaseAPIService from '@/services/BaseAPIService';
+
 // types
-import type { BoatContext } from '@/types/boat';
 import type { ChatRequest, ChatSession, ChatSessionSummary, ChatStreamEvent } from '@/types/chat';
 
-export default class APIService {
+export default class ChatAPIService extends BaseAPIService {
   /**
    * private methods
    */
@@ -47,33 +49,6 @@ export default class APIService {
   /**
    * public methods
    */
-
-  public async getBoat(profileID: string, signal?: AbortSignal): Promise<BoatContext> {
-    let response: Response;
-
-    try {
-      response = await fetch(`${RouteEnum.Base}${RouteEnum.Boat}/${profileID}`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'GET',
-        signal,
-      });
-
-      if (!response.ok || !response.body) {
-        console.error(`failed to get response: ${response.status}`, response.body);
-
-        throw new Error('bad response');
-      }
-
-      return (await response.json()) as Promise<BoatContext>;
-    } catch (error) {
-      // TODO: handle unauthorized events and when the response is bad
-      console.log(error);
-
-      throw error;
-    }
-  }
 
   public async getSession(id: string): Promise<ChatSession> {
     return this._safeFetch<ChatSession>(`/api/sessions/${id}`, mockSessionDetail(id), {

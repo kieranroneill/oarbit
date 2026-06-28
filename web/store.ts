@@ -5,20 +5,28 @@ import { createStore, type StoreApi } from 'zustand/vanilla';
 // constants
 import { STORE_NAME } from '@/constants';
 
+// enums
+import { LogLevelEnum } from '@/enums/logging';
+
 // slices
 import createBoatSlice from '@/slices/createBoatSlice';
-import createSystemSlice from '@/slices/createSystemSlice';
 
 // types
-import type { PersistedState, Store } from '@/types/store';
+import type { PersistedState, SliceOptions, Store } from '@/types/store';
+
+// utilities
+import { createLogger } from '@/utilities/logging';
 
 const store: () => StoreApi<Store> = () => {
+  const sliceOptions: SliceOptions = {
+    logger: createLogger((process.env.NEXT_PUBLIC_LOG_LEVEL as LogLevelEnum) ?? LogLevelEnum.Error),
+  };
+
   return createStore<Store>()(
     devtools(
       persist(
         (...api) => ({
-          ...createSystemSlice(...api),
-          ...createBoatSlice(...api),
+          ...createBoatSlice(sliceOptions)(...api),
         }),
         {
           name: STORE_NAME,
