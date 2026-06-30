@@ -2,7 +2,7 @@
 import { RouteEnum } from '@/enums/api';
 
 // errors
-import { BaseError, InternalServerError } from '@/errors';
+import { InternalServerError } from '@/errors';
 
 // services
 import BaseAPIService from '@/services/BaseAPIService';
@@ -38,21 +38,15 @@ export default class BoatAPIService extends BaseAPIService {
       if (!response.ok || !response.body) {
         _error = `failed to get response - ${response.status} - ${response.body}`;
 
-        this._logger.debug(`${BoatAPIService.displayName}#${__functionName}: ${_error}`);
+        this._logger.error(`${BoatAPIService.displayName}#${__functionName}: ${_error}`);
 
+        // TODO: handle unauthorized events and when the response is bad
         throw new InternalServerError(_error);
       }
 
       return (await response.json()) as Promise<BoatContext>;
     } catch (error) {
-      if ((error as BaseError).isOarbitError()) {
-        throw error;
-      }
-
-      // TODO: handle unauthorized events and when the response is bad
-      console.log(error);
-
-      throw error;
+      throw this._parseError(error as Error, { logPrefix: `${BoatAPIService.displayName}#${__functionName}` });
     }
   }
 }

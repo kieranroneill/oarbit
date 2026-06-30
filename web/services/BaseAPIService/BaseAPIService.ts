@@ -1,8 +1,12 @@
 // enums
 import { LogLevelEnum } from '@/enums/logging';
 
+// errors
+import { BaseError } from '@/errors/_base';
+import { InternalServerError, ParsingError } from '@/errors/network';
+
 // types
-import type { BaseAPIServiceOptions } from './types';
+import type { BaseAPIServiceOptions, ParseErrorOptions } from './types';
 import type { Logger } from '@/types/logging';
 
 // utilities
@@ -14,5 +18,19 @@ export default abstract class BaseAPIService {
 
   public constructor({ logger }: BaseAPIServiceOptions = {}) {
     this._logger = logger ?? createLogger((process.env.NEXT_PUBLIC_LOG_LEVEL as LogLevelEnum) ?? LogLevelEnum.Error);
+  }
+
+  protected _parseError(error: Error, { logPrefix }: ParseErrorOptions): BaseError {
+    if ((error as BaseError).isOarbitError()) {
+      return error as BaseError;
+    }
+
+    this._logger.error(`${logPrefix}:`, error);
+
+    if (error instanceof TypeError || error instanceof SyntaxError) {
+      return new ParsingError(`failed to parse response`);
+    }
+
+    return new InternalServerError(error.message);
   }
 }
