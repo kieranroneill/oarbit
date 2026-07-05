@@ -3,6 +3,7 @@ from enum import StrEnum
 
 class RouteEnum(StrEnum):
     BASE = "/api"
-    BOAT = "/boat"
-    CHAT = "/chat"
+    BOATS = "/boats"
+    CHATS = "/chats"
+    SPECIFICATIONS = "/specifications"
     STREAM = "/stream"

@@ -4,7 +4,7 @@ from fastapi.responses import StreamingResponse
 from api import controllers, dependencies, enums, schemas
 
 router = APIRouter(
-    prefix=f"{enums.api.RouteEnum.BASE}{enums.api.RouteEnum.CHAT}",
+    prefix=f"{enums.api.RouteEnum.BASE}{enums.api.RouteEnum.CHATS}",
     tags=["chat"],
 )
 
