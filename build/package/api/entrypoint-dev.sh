@@ -1,7 +1,6 @@
 #!/bin/sh
 
-ERROR_PREFIX="\033[0;31m[ERROR]\033[0m"
-INFO_PREFIX="\033[1;33m[INFO]\033[0m"
+. ./_set_vars.sh
 
 # Public: Injects the version and runs the Go core server using CompileDaemon.
 #
@@ -14,6 +13,8 @@ INFO_PREFIX="\033[1;33m[INFO]\033[0m"
 #
 # Returns exit code 0.
 main() {
+  _set_vars
+
   version=$(cat ./VERSION)
 
   # if the version argument exists, use it
