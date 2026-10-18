@@ -2,7 +2,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends
 
-from api import controllers, dependencies, enums, schemas
+from api import controllers, dependencies, enums
 from api.schemas.boat import BoatResponseSchema, BoatSpecificationSchema
 from api.schemas.defaults import BaseListResponseSchema
 
