@@ -48,6 +48,44 @@ services:
 #    volumes:
 #      - ../.model:/root/.ollama
 
+  migrations_down:
+    build:
+      context: ../
+      dockerfile: ./build/package/migrations/Dockerfile
+    command: ["goose", "--dir", "migrations", "down"]
+    container_name: oarbit_migrations_down_dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      GOOSE_DRIVER: postgres
+      GOOSE_DBSTRING: 'postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@${POSTGRES_HOST:-postgres}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-oarbit}?sslmode=disable'
+    image: kieranroneill/oarbit-migrations-down:development
+    networks:
+      - oarbit_network_dev
+    profiles: ['migration']
+    volumes:
+      - ../migrations:/app/migrations:ro
+
+  migrations_up:
+    build:
+      context: ../
+      dockerfile: ./build/package/migrations/Dockerfile
+    command: ["goose", "--dir", "migrations", "up"]
+    container_name: oarbit_migrations_up_dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      GOOSE_DRIVER: postgres
+      GOOSE_DBSTRING: 'postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@${POSTGRES_HOST:-postgres}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-oarbit}?sslmode=disable'
+    image: kieranroneill/oarbit-migrations-up:development
+    networks:
+      - oarbit_network_dev
+    profiles: ['migration']
+    volumes:
+      - ../migrations:/app/migrations:ro
+
   postgres:
     container_name: oarbit_postgres_dev
     image: postgres:16-alpine

@@ -12,7 +12,9 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 
+	"github.com/kieranroneill/oarbit/internal/boat"
 	"github.com/kieranroneill/oarbit/internal/platform/application"
+	"github.com/kieranroneill/oarbit/internal/platform/httpclient"
 	"github.com/kieranroneill/oarbit/internal/platform/logging"
 	"github.com/kieranroneill/oarbit/internal/platform/postgres"
 	"github.com/kieranroneill/oarbit/internal/versions"
@@ -52,8 +54,14 @@ func main() {
 	e.Use(middleware.RequestLogger())
 
 	// routes
-	// /versions
-	e.GET(versions.Path, versions.NewGetVersionsRoute(applicationConfig))
+	// /api
+	apiRouter := e.Group(httpclient.APIPath)
+	// /api/boat
+	boatRouter := apiRouter.Group(boat.Path)
+	// /api/boat/specifications
+	boatRouter.GET(httpclient.SpecificationsPath, boat.NewGetBoatSpecificationsRoute(database))
+	// /api/versions
+	apiRouter.GET(versions.Path, versions.NewGetVersionsRoute(applicationConfig))
 
 	// set up server
 	server := echo.StartConfig{

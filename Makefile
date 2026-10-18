@@ -47,6 +47,24 @@ format_js:
 	pnpm format
 
 ###
+# database
+###
+
+migrations_down_dev:
+	docker compose \
+		-f ./deployments/compose.development.yml \
+		-p oarbit-dev \
+		 run \
+		--rm migrations_down
+
+migrations_up_dev:
+	docker compose \
+		-f ./deployments/compose.development.yml \
+	 	-p oarbit-dev \
+		run \
+		--rm migrations_up
+
+###
 # testing
 ###
 
