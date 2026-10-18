@@ -1,14 +1,12 @@
 'use client';
-
 import { Anchor, MessageSquare, Plus, Wrench, Cpu, NotebookPen, Settings } from 'lucide-react';
 import { type FC, useMemo } from 'react';
 
 // components
-import ConnectionStatus from '@/components/api/ConnectionStatus';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
+import Button from '@/components/ui/Button';
+import ScrollArea from '@/components/ui/ScrollArea';
+import Separator from '@/components/ui/Separator';
+import Skeleton from '@/components/ui/Skeleton';
 
 // types
 import type { NavigationItem, Props } from './types';
@@ -17,15 +15,7 @@ import type { NavigationItem, Props } from './types';
 import { formatRelativeTime } from '@/utilities/date';
 import { cn } from '@/utilities/styles';
 
-const Sidebar: FC<Props> = ({
-  activeNavigation = 'assistant',
-  boatDetails,
-  connection,
-  sessions,
-  loading,
-  onNewChat,
-  onNavigate,
-}) => {
+const Sidebar: FC<Props> = ({ activeNavigation = 'assistant', boat, sessions, loading, onNewChat, onNavigate }) => {
   // memos
   const navigationItems: NavigationItem[] = useMemo(
     () => [
@@ -46,8 +36,8 @@ const Sidebar: FC<Props> = ({
           <Anchor className="size-4" aria-hidden="true" />
         </div>
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold tracking-tight">Helm Assistant</p>
-          <ConnectionStatus status={connection} />
+          <p className="truncate text-sm font-semibold tracking-tight">{process.env.NEXT_PUBLIC_APP_TITLE}</p>
+          {/*<ConnectionStatus status={connection} />*/}
         </div>
       </div>
 
@@ -61,25 +51,28 @@ const Sidebar: FC<Props> = ({
             <Skeleton className="h-3 w-40" />
             <Skeleton className="h-3 w-24" />
           </div>
-        ) : boatDetails ? (
+        ) : boat ? (
           <div className="rounded-xl border border-sidebar-border bg-sidebar-accent/40 p-3">
-            <p className="text-sm font-semibold leading-tight">{boatDetails.name}</p>
+            <p className="text-sm font-semibold leading-tight">{boat.profile.name}</p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              {boatDetails.make} {boatDetails.model}
+              {boat.specification.make} {boat.specification.model}
             </p>
             <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
               <div>
                 <dt className="text-muted-foreground">Year</dt>
-                <dd className="font-medium">{boatDetails.year}</dd>
+                <dd className="font-medium">{boat.profile.year}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground">LOA</dt>
-                <dd className="font-medium">{boatDetails.lengthMeters} m</dd>
+                <dd className="font-medium">{(boat.specification.dimensions.loaMm / 1000).toFixed(2)} m</dd>
               </div>
-              <div className="col-span-2">
-                <dt className="text-muted-foreground">Home port</dt>
-                <dd className="font-medium">{boatDetails.homePort}</dd>
-              </div>
+
+              {boat.profile.homePort && (
+                <div className="col-span-2">
+                  <dt className="text-muted-foreground">Home port</dt>
+                  <dd className="font-medium">{boat.profile.homePort}</dd>
+                </div>
+              )}
             </dl>
           </div>
         ) : null}
@@ -136,16 +129,18 @@ const Sidebar: FC<Props> = ({
             </div>
           ) : (
             <ul className="flex flex-col gap-0.5">
-              {sessions.map((s) => (
-                <li key={s.id}>
+              {sessions.map((session) => (
+                <li key={session.id}>
                   <button
                     type="button"
                     className="flex w-full flex-col items-start gap-0.5 rounded-lg px-3 py-2 text-left transition-colors hover:bg-sidebar-accent/60"
                   >
-                    <span className="line-clamp-1 text-sm font-medium">{s.title}</span>
+                    <span className="line-clamp-1 text-sm font-medium">{session.title}</span>
                     <span className="flex w-full items-center justify-between gap-2">
-                      <span className="line-clamp-1 text-xs text-muted-foreground">{s.preview}</span>
-                      <span className="shrink-0 text-xs text-muted-foreground">{formatRelativeTime(s.updatedAt)}</span>
+                      <span className="line-clamp-1 text-xs text-muted-foreground">{session.preview}</span>
+                      <span className="shrink-0 text-xs text-muted-foreground">
+                        {formatRelativeTime(session.updatedAt)}
+                      </span>
                     </span>
                   </button>
                 </li>

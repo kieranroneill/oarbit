@@ -3,7 +3,7 @@
 import { useCallback, useState } from 'react';
 
 // services
-import APIService from '@/services/APIService';
+import ChatAPIService from '@/services/ChatAPIService';
 
 // types
 import type { UseChatSessionsState } from './types';
@@ -15,7 +15,7 @@ export default function useChatSessions(): UseChatSessionsState {
   const [loading, setLoading] = useState(true);
   // callbacks
   const fetch = useCallback(async () => {
-    const apiService = new APIService();
+    const apiService = new ChatAPIService();
 
     setLoading(true);
     setSessions(await apiService.getSessions());

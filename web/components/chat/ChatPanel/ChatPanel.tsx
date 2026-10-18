@@ -1,19 +1,20 @@
 'use client';
 
 import { AlertTriangle, PanelRight, RotateCw } from 'lucide-react';
+import { useT } from 'next-i18next/client';
 import { type FC, useEffect, useMemo, useRef } from 'react';
 
 // components
 import ActivityPill from '@/components/chat/ActivityPill';
+import Alert from '@/components/ui/Alert';
+import Button from '@/components/ui/Button';
+import ChatEmptyState from '@/components/chat/ChatEmptyState';
+import Composer from '@/components/chat/Composer';
 import MessageBubble from '@/components/chat/MessageBubble';
 import MessagePill from '@/components/chat/MessagePill';
+import QuickPrompts from '@/components/chat/QuickPrompts';
 import ThinkingPill from '@/components/chat/ThinkingPill';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { ChatEmptyState } from '@/components/chat/chat-empty-state';
-import { Composer } from '@/components/chat/composer';
-import { QuickPrompts } from '@/components/chat/quick-prompts';
+import ScrollArea from '@/components/ui/ScrollArea';
 
 // enums
 import { MessageRoleEnum } from '@/enums';
@@ -23,7 +24,7 @@ import type { Props } from './types';
 
 const ChatPanel: FC<Props> = ({
   activity,
-  boatDetails,
+  boat,
   error,
   isStreaming,
   messages,
@@ -31,6 +32,7 @@ const ChatPanel: FC<Props> = ({
   retryMessage,
   sendMessage,
 }) => {
+  const { t } = useT();
   // refs
   const scrollRef = useRef<HTMLDivElement>(null);
   // memos
@@ -58,23 +60,24 @@ const ChatPanel: FC<Props> = ({
       {onOpenContext && (
         <div className="flex items-center justify-between border-b border-border px-4 py-3 lg:hidden">
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold">{boatDetails?.name ?? 'Onboard Assistant'}</p>
+            <p className="truncate text-sm font-semibold">{boat?.profile.name ?? process.env.NEXT_PUBLIC_APP_TITLE}</p>
 
             <p className="truncate text-xs text-muted-foreground">
-              {boatDetails ? `${boatDetails.make} ${boatDetails.model}` : 'Connecting…'}
+              {boat ? `${boat.specification.make} ${boat.specification.model}` : t('common:captions.connecting')}
             </p>
           </div>
 
           <Button variant="outline" size="sm" onClick={onOpenContext}>
             <PanelRight data-icon="inline-start" />
-            Context
+
+            {t('common:labels.context')}
           </Button>
         </div>
       )}
 
       <ScrollArea className="min-h-0 flex-1">
         <div ref={scrollRef} className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-6">
-          {!hasMessages && !activity && <ChatEmptyState boat={boatDetails} onSelect={sendMessage} />}
+          {!hasMessages && !activity && <ChatEmptyState boat={boat} onSelect={sendMessage} />}
 
           {messages.map((message) => (
             <MessageBubble key={message.id} role={message.role} timestamp={message.timestamp}>
@@ -97,14 +100,15 @@ const ChatPanel: FC<Props> = ({
           {error && (
             <Alert variant="destructive">
               <AlertTriangle />
-              <AlertTitle>Request failed</AlertTitle>
-              <AlertDescription>
+              <Alert.Title>Request failed</Alert.Title>
+              <Alert.Description>
                 <span>{error}</span>
                 <Button variant="outline" size="sm" onClick={retryMessage} className="mt-2">
                   <RotateCw data-icon="inline-start" />
-                  Retry
+
+                  {t('common:labels.retry')}
                 </Button>
-              </AlertDescription>
+              </Alert.Description>
             </Alert>
           )}
         </div>
@@ -120,9 +124,7 @@ const ChatPanel: FC<Props> = ({
 
           <Composer onSend={sendMessage} isStreaming={isStreaming} />
 
-          <p className="mt-2 text-center text-xs text-muted-foreground">
-            Assistant guidance is advisory. Verify against manuals and conditions before acting.
-          </p>
+          <p className="mt-2 text-center text-xs text-muted-foreground">{t('chat:captions.advisoryWarning')}</p>
         </div>
       </div>
     </div>

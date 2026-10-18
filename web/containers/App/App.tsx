@@ -1,28 +1,28 @@
 'use client';
-
-import { type FC, useCallback, useEffect, useState } from 'react';
+import { useT } from 'next-i18next/client';
 import { Menu, PanelRight } from 'lucide-react';
+import { type FC, useCallback, useEffect, useState } from 'react';
 
 // components
-import { Button } from '@/components/ui/button';
+import Button from '@/components/ui/Button';
 import ChatPanel from '@/components/chat/ChatPanel';
 import ContextRail from '@/components/context/ContextRail';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import Sheet from '@/components/ui/Sheet';
 
 // containers
 import Sidebar from '@/containers/Sidebar';
 
-// enums
-import { ConnectionStatusEnum } from '@/enums/api';
-
 // hooks
-import useBoatContext from '@/hooks/useBoatContext';
+import useStore from '@/hooks/useStore';
 import useChatSession from '@/hooks/useChatSession';
 import useChatSessions from '@/hooks/useChatSessions';
 
 const App: FC = () => {
+  const { t } = useT();
   // hooks
-  const { boatContext, fetch: fetchBoatContext, loading: boatContextLoading } = useBoatContext();
+  const boat = useStore(({ boat }) => boat);
+  const fetchBoat = useStore(({ fetchBoat }) => fetchBoat);
+  const fetchingBoat = useStore(({ fetchingBoat }) => fetchingBoat);
   const {
     activity,
     error: chatError,
@@ -53,108 +53,110 @@ const App: FC = () => {
   }, [resetChat, setNavigationOpen]);
 
   useEffect(() => {
-    void fetchBoatContext();
+    void fetchBoat();
     void fetchChatSessions();
   }, []);
 
   return (
     <div className="flex h-dvh w-full overflow-hidden bg-background text-foreground">
-      {/* Desktop sidebar */}
+      {/* desktop sidebar */}
       <aside className="hidden w-72 shrink-0 border-r border-border lg:block">
         <Sidebar
           activeNavigation={activeNavigation}
-          boatDetails={boatContext?.specification}
-          connection={boatContext?.connection ?? ConnectionStatusEnum.Syncing}
           sessions={sessions}
-          loading={boatContextLoading}
+          loading={fetchingBoat}
           onNewChat={handleOnNewChat}
           onNavigate={setActiveNavigation}
+          {...(boat && { boat })}
         />
       </aside>
 
-      {/* Main chat column */}
+      {/* main chat column */}
       <main className="flex min-w-0 flex-1 flex-col">
-        {/* Adaptive top bar: nav trigger below lg, context trigger below xl */}
+        {/* adaptive top bar: nav trigger below lg, context trigger below xl */}
         <header className="flex items-center justify-between gap-2 border-b border-border px-4 py-3 xl:hidden">
           <div className="flex min-w-0 items-center gap-2">
             <Button
               variant="ghost"
               size="icon"
               onClick={handleOnNavigationOpenClick}
-              aria-label="Open navigation"
+              aria-label={t('common:captions.openNavigation')}
               className="lg:hidden"
             >
               <Menu className="size-5" />
             </Button>
 
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold">{boatContext?.specification?.name ?? 'Helm Assistant'}</p>
+              <p className="truncate text-sm font-semibold">
+                {boat?.profile.name ?? process.env.NEXT_PUBLIC_APP_TITLE}
+              </p>
 
               <p className="truncate text-xs text-muted-foreground">
-                {boatContext?.specification
-                  ? `${boatContext.specification.make} ${boatContext.specification.model}`
-                  : 'Connecting…'}
+                {boat?.specification
+                  ? `${boat.specification.make} ${boat.specification.model}`
+                  : t('common:captions.connecting')}
               </p>
             </div>
           </div>
+
           <Button variant="outline" size="sm" onClick={handleOnContextOpenClick}>
             <PanelRight data-icon="inline-start" />
-            Context
+
+            {t('common:labels.context')}
           </Button>
         </header>
 
         <div className="min-h-0 flex-1">
           <ChatPanel
-            activity={activity}
-            boatDetails={boatContext?.specification || null}
-            error={chatError}
             isStreaming={isStreaming}
             messages={messages}
             sendMessage={sendChatMessage}
             retryMessage={retryChatMessage}
+            {...(activity && { activity })}
+            {...(boat && { boat })}
+            {...(chatError && { error: chatError })}
           />
         </div>
       </main>
 
       {/* Desktop context rail */}
       <aside className="hidden w-80 shrink-0 overflow-y-auto border-l border-border p-4 xl:block 2xl:w-96">
-        <ContextRail context={boatContext} loading={boatContextLoading} />
+        <ContextRail loading={fetchingBoat} {...(boat && { boat })} />
       </aside>
 
       {/* Mobile/tablet navigation drawer */}
       <Sheet open={navigationOpen} onOpenChange={setNavigationOpen}>
-        <SheetContent side="left" className="w-80 p-0">
-          <SheetHeader className="sr-only">
-            <SheetTitle>Navigation</SheetTitle>
+        <Sheet.Content side="left" className="w-80 p-0">
+          <Sheet.Header className="sr-only">
+            <Sheet.Title>{t('common:title.navigation')}</Sheet.Title>
 
-            <SheetDescription>Boat summary, conversations, and navigation</SheetDescription>
-          </SheetHeader>
+            <Sheet.Description>{t('common:descriptions.sidebar')}</Sheet.Description>
+          </Sheet.Header>
 
           <Sidebar
             activeNavigation={activeNavigation}
-            boatDetails={boatContext?.specification}
-            connection={boatContext?.connection ?? ConnectionStatusEnum.Syncing}
             sessions={sessions}
-            loading={boatContextLoading || chatSessionsLoading}
+            loading={fetchingBoat || chatSessionsLoading}
             onNavigate={handleOnMobileNavigate}
             onNewChat={handleOnNewChat}
+            {...(boat && { boat })}
           />
-        </SheetContent>
+        </Sheet.Content>
       </Sheet>
 
       {/* Tablet/mobile context drawer */}
       <Sheet open={contextOpen} onOpenChange={setContextOpen}>
-        <SheetContent side="right" className="w-full gap-0 overflow-y-auto p-0 sm:max-w-md">
-          <SheetHeader className="border-b border-border">
-            <SheetTitle>Onboard context</SheetTitle>
+        <Sheet.Content side="right" className="w-full gap-0 overflow-y-auto p-0 sm:max-w-md">
+          <Sheet.Header className="border-b border-border">
+            <Sheet.Title>{t('common:titles.onboardContext')}</Sheet.Title>
 
-            <SheetDescription>Live boat status, weather, power, and maintenance</SheetDescription>
-          </SheetHeader>
+            <Sheet.Description>{t('common:descriptions.onboardContext')}</Sheet.Description>
+          </Sheet.Header>
 
           <div className="p-4">
-            <ContextRail context={boatContext} loading={boatContextLoading} />
+            <ContextRail loading={fetchingBoat} {...(boat && { boat })} />
           </div>
-        </SheetContent>
+        </Sheet.Content>
       </Sheet>
     </div>
   );

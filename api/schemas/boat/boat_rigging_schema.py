@@ -1,7 +1,9 @@
-from pydantic import BaseModel, Field
+from pydantic import Field
+
+from api.schemas.defaults import BaseSchema
 
 
-class BoatRiggingSchema(BaseModel):
+class BoatRiggingSchema(BaseSchema):
     e_mm: int | None = None
     forestay_length_mm: int
     i_mm: int | None = None
