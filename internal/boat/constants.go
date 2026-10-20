@@ -1,5 +1,5 @@
 package boat
 
 const (
-	Path string = "/boat"
+	Path string = "/boats"
 )

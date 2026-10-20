@@ -9,10 +9,13 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/kieranroneill/oarbit/internal/conversation"
+	"github.com/kieranroneill/oarbit/internal/user"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 
 	"github.com/kieranroneill/oarbit/internal/boat"
+	"github.com/kieranroneill/oarbit/internal/platform/agent"
 	"github.com/kieranroneill/oarbit/internal/platform/application"
 	"github.com/kieranroneill/oarbit/internal/platform/httpclient"
 	"github.com/kieranroneill/oarbit/internal/platform/logging"
@@ -48,18 +51,35 @@ func main() {
 		}
 	}()
 
+	// create agent connection
+	chatAdapter, err := agent.NewChatAdapter(context.Background())
+	if err != nil {
+		slog.Error("failed to connect to agent", "error", err)
+
+		return
+	}
+
 	e := echo.New()
 
 	// middlewares
 	e.Use(middleware.RequestLogger())
 
 	// routes
-	// /api
+	// /api/
 	apiRouter := e.Group(httpclient.APIPath)
-	// /api/boat
-	boatRouter := apiRouter.Group(boat.Path)
-	// /api/boat/specifications
-	boatRouter.GET(httpclient.SpecificationsPath, boat.NewGetBoatSpecificationsRoute(database))
+	// /api/boats/
+	boatsRouter := apiRouter.Group(boat.Path)
+	// /api/boats/specifications
+	boatsRouter.GET(httpclient.SpecificationsPath, boat.NewGetBoatSpecificationsRoute(database))
+	// /api/users/
+	usersRouter := apiRouter.Group(user.Path)
+	// /api/users/{user_id}
+	// /api/users/{user_id}/conversations
+	// /api/users/{user_id}/conversations/chat
+	usersRouter.POST(fmt.Sprintf("/:user_id%s%s", conversation.Path, conversation.ChatEndpoint), conversation.NewPostChatRoute(chatAdapter, database))
+	// /api/users/{user_id}/conversations/{conversation_id}
+	// /api/users/{user_id}/conversations/{conversation_id}/chat
+	usersRouter.POST(fmt.Sprintf("/:user_id%s/:conversation_id%s", conversation.Path, conversation.ChatEndpoint), conversation.NewPostChatRoute(chatAdapter, database))
 	// /api/versions
 	apiRouter.GET(versions.Path, versions.NewGetVersionsRoute(applicationConfig))
 

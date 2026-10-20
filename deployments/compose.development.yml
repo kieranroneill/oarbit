@@ -11,8 +11,11 @@ services:
         condition: service_healthy
     environment:
       API_PORT: ${API_PORT:-3000}
+      DESCRIPTION: ${DESCRIPTION:-"Oarbit is an onboard knowledge and maintenance copilot that centralizes technical documents, service logs, and operational notes for your vessel."}
       ENVIRONMENT: ${ENVIRONMENT:-development}
       LOG_LEVEL: ${LOG_LEVEL:-debug}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://ollama:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:4b}
       POSTGRES_DB: ${POSTGRES_DB:-oarbit}
       POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}

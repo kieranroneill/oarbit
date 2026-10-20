@@ -7,8 +7,18 @@ import (
 	"github.com/uptrace/bun"
 )
 
+type Service struct {
+	db *bun.DB
+}
+
+func NewService(db *bun.DB) *Service {
+	return &Service{
+		db: db,
+	}
+}
+
 /**
- * profile
+ * static private functions
  */
 
 func toProfile(model ProfileModel) Profile {
@@ -29,20 +39,6 @@ func toProfile(model ProfileModel) Profile {
 	}
 
 	return dto
-}
-
-/**
- * specification
- */
-
-type SpecificationService struct {
-	repository *SpecificationRepository
-}
-
-func NewSpecificationService(db *bun.DB) *SpecificationService {
-	return &SpecificationService{
-		repository: NewSpecificationRepository(db),
-	}
 }
 
 func toSpecification(model SpecificationModel) Specification {
@@ -124,11 +120,15 @@ func toSpecification(model SpecificationModel) Specification {
 	return dto
 }
 
-func (s *SpecificationService) FindAll(ctx context.Context, limit int64, offset int64) ([]Specification, int64, error) {
+/**
+ * public functions
+ */
+
+func (s *Service) FindAll(ctx context.Context, limit int64, offset int64) ([]Specification, int64, error) {
 	var models []SpecificationModel
 
 	results := make([]Specification, 0)
-	total, err := s.repository.db.NewSelect().
+	total, err := s.db.NewSelect().
 		Model(&models).
 		Order("id ASC").
 		Limit(limit).

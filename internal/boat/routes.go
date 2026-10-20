@@ -17,7 +17,7 @@ func NewGetBoatSpecificationsRoute(db *bun.DB) echo.HandlerFunc {
 			return err
 		}
 
-		service := NewSpecificationService(db)
+		service := NewService(db)
 		results, total, err := service.FindAll(ctx, limit, offset)
 
 		if err != nil {
