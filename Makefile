@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: dev test
+.PHONY: dev install install_go_deps install_go_dev_deps install_js_deps format format_go format_js migrations_down_dev migrations_up_dev test test_unit test_go_unit
 
 all: install
 
@@ -9,7 +9,18 @@ all: install
 ###
 
 install:
+	${MAKE} install_go_deps
+	${MAKE} install_go_dev_deps
 	${MAKE} install_js_deps
+
+install_go_deps:
+	@echo ">>> installing go dependencies"
+	go mod download
+	go mod verify
+
+install_go_dev_deps:
+	@echo ">>> installing go dev dependencies"
+	go install github.com/pressly/goose/v3/cmd/goose@latest
 
 install_js_deps:
 	@echo ">>> installing javascript dependencies"
