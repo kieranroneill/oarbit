@@ -23,6 +23,6 @@ COPY ./VERSION .
 # copy scripts
 COPY ./scripts/utilities/_set_vars.sh /_set_vars.sh
 COPY ./build/package/api/entrypoint-dev.sh /entrypoint-dev.sh
-RUN chmod +x /entrypoint-dev.sh
+RUN chmod +x /_set_vars.sh /entrypoint-dev.sh
 
 ENTRYPOINT ["/entrypoint-dev.sh"]

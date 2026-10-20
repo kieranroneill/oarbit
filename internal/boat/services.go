@@ -2,8 +2,7 @@ package boat
 
 import (
 	"context"
-	"database/sql"
-	"errors"
+	"log/slog"
 
 	"github.com/uptrace/bun"
 )
@@ -125,23 +124,25 @@ func toSpecification(model SpecificationModel) Specification {
 	return dto
 }
 
-func (s *SpecificationService) FindAll(ctx context.Context) ([]Specification, error) {
+func (s *SpecificationService) FindAll(ctx context.Context, limit int64, offset int64) ([]Specification, int64, error) {
 	var models []SpecificationModel
-	var results []Specification
 
-	if err := s.repository.db.NewSelect().
+	results := make([]Specification, 0)
+	total, err := s.repository.db.NewSelect().
 		Model(&models).
-		Scan(ctx); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return []Specification{}, nil
-		}
+		Order("id ASC").
+		Limit(limit).
+		Offset(offset).
+		ScanAndCount(ctx)
+	if err != nil {
+		slog.Error("failed to find boat specifications", "error", err)
 
-		return []Specification{}, err
+		return []Specification{}, 0, err
 	}
 
 	for _, model := range models {
 		results = append(results, toSpecification(model))
 	}
 
-	return results, nil
+	return results, total, nil
 }

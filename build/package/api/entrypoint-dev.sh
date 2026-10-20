@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. ./_set_vars.sh
+. /_set_vars.sh
 
 # Public: Injects the version and runs the Go core server using CompileDaemon.
 #

@@ -11,21 +11,33 @@ import (
 
 func NewGetBoatSpecificationsRoute(db *bun.DB) echo.HandlerFunc {
 	return func(c *echo.Context) error {
-		service := NewSpecificationService(db)
-		results, err := service.FindAll(c.Request().Context())
-
+		ctx := c.Request().Context()
+		limit, offset, err := httpclient.ParseListParams(c)
 		if err != nil {
 			return err
 		}
 
+		service := NewSpecificationService(db)
+		results, total, err := service.FindAll(ctx, limit, offset)
+
+		if err != nil {
+			return c.NoContent(http.StatusInternalServerError)
+		}
+
 		if results == nil {
 			return c.JSON(http.StatusOK, httpclient.ListResponse[Specification]{
-				Items: []Specification{},
+				Items:  []Specification{},
+				Limit:  limit,
+				Offset: offset,
+				Total:  total,
 			})
 		}
 
 		return c.JSON(http.StatusOK, httpclient.ListResponse[Specification]{
-			Items: results,
+			Items:  results,
+			Limit:  limit,
+			Offset: offset,
+			Total:  total,
 		})
 	}
 }

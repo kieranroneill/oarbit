@@ -66,8 +66,12 @@ func main() {
 	// set up server
 	server := echo.StartConfig{
 		Address:         fmt.Sprintf(":%s", applicationConfig.Port),
+		HideBanner:      true,
 		GracefulTimeout: 10 * time.Second,
 	}
+
+	// display a welcome message
+	fmt.Printf(httpclient.WelcomeMessage, applicationConfig.Version, applicationConfig.Environment)
 
 	// start the server
 	if err = server.Start(ctx, e); err != nil {
