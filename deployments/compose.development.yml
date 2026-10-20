@@ -5,6 +5,8 @@ services:
       dockerfile: ./build/package/api/Dockerfile.development
     container_name: oarbit_api_dev
     depends_on:
+      ollama:
+        condition: service_healthy
       postgres:
         condition: service_healthy
     environment:
@@ -26,27 +28,6 @@ services:
     volumes:
       - ../cmd:/app/cmd:cached
       - ../internal:/app/internal:cached
-
-#  model:
-#    build:
-#      context: ../
-#      dockerfile: ./build/package/model/Dockerfile.development
-#    container_name: oarbit_model_dev
-#    environment:
-#      MODEL: ${MODEL:-llama3.1:8b}
-#    healthcheck:
-#      test: ['CMD', 'curl', '-fsS', 'http://127.0.0.1:11434/api/tags']
-#      interval: 10s
-#      timeout: 5s
-#      retries: 12
-#      start_period: 20s
-#    image: kieranroneill/oarbit-model:development
-#    networks:
-#      - oarbit_network_dev
-#    ports:
-#      - '11434:11434'
-#    volumes:
-#      - ../.model:/root/.ollama
 
   migrations_down:
     build:
@@ -85,6 +66,34 @@ services:
     profiles: ['migration']
     volumes:
       - ../migrations:/app/migrations:ro
+
+  ollama:
+    build:
+      context: ../
+      dockerfile: ./build/package/ollama/Dockerfile.development
+    container_name: oarbit_ollama_dev
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
+    environment:
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:4b}
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://127.0.0.1:11434/api/tags']
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    image: kieranroneill/oarbit-ollama:development
+    networks:
+      - oarbit_network_dev
+    ports:
+      - '11434:11434'
+    volumes:
+      - ../.ollama:/root/.ollama
 
   postgres:
     container_name: oarbit_postgres_dev

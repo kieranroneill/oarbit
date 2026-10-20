@@ -1,24 +1,16 @@
 #!/usr/bin/env bash
 
-ERROR_PREFIX="\033[0;31m[ERROR]\033[0m"
-INFO_PREFIX="\033[1;33m[INFO]\033[0m"
-
-# Private: Stops the background Ollama process if it is running.
-function cleanup() {
-  if kill -0 "${OLLAMA_PID:-0}" 2>/dev/null; then
-    kill "${OLLAMA_PID}" || true
-    wait "${OLLAMA_PID}" || true
-  fi
-}
+source /_set_vars.sh
+source /_cleanup.bash
 
 # Public: Starts Ollama, ensures the configured model is present, then runs the server in the foreground.
 #
 # Environment Variables
 #
-# MODEL - The model to pull and serve, defaults to "llama3.1:8b".
+# OLLAMA_MODEL - The Ollama model to pull and serve, defaults to "qwen3:4b".
 #
 # Examples
-#   ./entrypoint.sh
+#   ./entrypoint.bash
 function main() {
   local attempt
   local healthcheck_url
@@ -26,7 +18,9 @@ function main() {
   local model
   local ready
 
-  model="${MODEL:-llama3.1:8b}"
+  _set_vars
+
+  model="${OLLAMA_MODEL:-qwen3:4b}"
   host="${OLLAMA_HOST:-0.0.0.0:11434}"
   healthcheck_url="http://127.0.0.1:11434/api/tags"
   ready=0
@@ -61,7 +55,7 @@ function main() {
   fi
 
   printf "%b restarting ollama in foreground...\n" "${INFO_PREFIX}"
-  cleanup
+  _cleanup
   trap - EXIT
   exec /bin/ollama serve
 }

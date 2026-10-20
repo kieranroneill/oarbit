@@ -279,6 +279,6 @@ dist
 .pnp.*
 
 ### Project files
-.model/
+.ollama/
 .postgres/
 !build/
