@@ -10,7 +10,10 @@ import (
 
 	"github.com/cloudwego/eino-ext/components/model/ollama"
 	"github.com/cloudwego/eino/adk"
+	"github.com/cloudwego/eino/components/tool"
+	"github.com/cloudwego/eino/compose"
 	"github.com/cloudwego/eino/schema"
+	"github.com/kieranroneill/oarbit/internal/weather"
 
 	_os "github.com/kieranroneill/oarbit/internal/platform/os"
 )
@@ -30,11 +33,24 @@ func initializeAgent(ctx context.Context, baseURL string, model string) (*adk.Ch
 		return nil, err
 	}
 
+	// create tools
+	getWeatherByLocationTool, err := weather.NewGetWeatherByLocationTool()
+	if err != nil {
+		return nil, err
+	}
+
 	agent, err := adk.NewChatModelAgent(ctx, &adk.ChatModelAgentConfig{
 		Name:        _os.GetEnvWithDefault("TITLE", "Oarbit"),
 		Description: _os.GetEnvWithDefault("DESCRIPTION", "Oarbit is an onboard knowledge and maintenance copilot that centralizes technical documents, service logs, and operational notes for your vessel."),
 		Instruction: GeneralInstruction,
 		Model:       chatModel,
+		ToolsConfig: adk.ToolsConfig{
+			ToolsNodeConfig: compose.ToolsNodeConfig{
+				Tools: []tool.BaseTool{
+					getWeatherByLocationTool,
+				},
+			},
+		},
 	})
 	if err != nil {
 		return nil, err
@@ -103,9 +119,9 @@ func (a *ChatAdapter) Chat(ctx context.Context, messages []*schema.Message) (*Ch
 
 		for _, toolCall := range message.ToolCalls {
 			toolCalls = append(toolCalls, ToolCall{
+				Arguments: toolCall.Function.Arguments,
 				ID:        toolCall.ID,
 				Name:      toolCall.Function.Name,
-				Arguments: toolCall.Function.Arguments,
 			})
 		}
 

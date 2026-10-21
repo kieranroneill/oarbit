@@ -9,17 +9,17 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/kieranroneill/oarbit/internal/conversation"
-	"github.com/kieranroneill/oarbit/internal/user"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 
 	"github.com/kieranroneill/oarbit/internal/boat"
+	"github.com/kieranroneill/oarbit/internal/conversation"
 	"github.com/kieranroneill/oarbit/internal/platform/agent"
 	"github.com/kieranroneill/oarbit/internal/platform/application"
 	"github.com/kieranroneill/oarbit/internal/platform/httpclient"
 	"github.com/kieranroneill/oarbit/internal/platform/logging"
 	"github.com/kieranroneill/oarbit/internal/platform/postgres"
+	"github.com/kieranroneill/oarbit/internal/user"
 	"github.com/kieranroneill/oarbit/internal/versions"
 )
 

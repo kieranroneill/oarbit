@@ -1,7 +1,6 @@
 package conversation
 
 import (
-	"log/slog"
 	"net/http"
 
 	"github.com/kieranroneill/oarbit/internal/platform/agent"
@@ -18,8 +17,6 @@ func NewPostChatRoute(chatAdapter *agent.ChatAdapter, db *bun.DB) echo.HandlerFu
 		if err := c.Bind(&params); err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
-
-		slog.Debug("chat request", "params", params)
 
 		if params.Query == "" {
 			return echo.NewHTTPError(http.StatusBadRequest, `"query"" is required`)
