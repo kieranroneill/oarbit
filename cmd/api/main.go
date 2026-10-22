@@ -9,7 +9,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/kieranroneill/oarbit/internal/platform/http"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 
@@ -17,6 +16,7 @@ import (
 	"github.com/kieranroneill/oarbit/internal/conversation"
 	"github.com/kieranroneill/oarbit/internal/platform/agent"
 	"github.com/kieranroneill/oarbit/internal/platform/application"
+	_http "github.com/kieranroneill/oarbit/internal/platform/http"
 	"github.com/kieranroneill/oarbit/internal/platform/logging"
 	"github.com/kieranroneill/oarbit/internal/platform/postgres"
 	"github.com/kieranroneill/oarbit/internal/user"
@@ -66,11 +66,11 @@ func main() {
 
 	// routes
 	// /api/v1/
-	apiRouter := e.Group(fmt.Sprintf("%s/v%s", http.APIPath, applicationConfig.ParseMajorVersion()))
+	apiRouter := e.Group(fmt.Sprintf("%s/v%s", _http.APIPath, applicationConfig.ParseMajorVersion()))
 	// /api/v1/boats/
 	boatsRouter := apiRouter.Group(boat.Path)
 	// /api/v1/boats/specifications
-	boatsRouter.GET(http.SpecificationsPath, boat.NewGetBoatSpecificationsRoute(database))
+	boatsRouter.GET(_http.SpecificationsPath, boat.NewGetBoatSpecificationsRoute(database))
 	// /api/v1/users/
 	usersRouter := apiRouter.Group(user.Path)
 	// /api/v1/users/:user_id
@@ -91,7 +91,7 @@ func main() {
 	}
 
 	// display a welcome message
-	fmt.Printf(http.WelcomeMessage, applicationConfig.Version, applicationConfig.Environment)
+	fmt.Printf(_http.WelcomeMessage, applicationConfig.Version, applicationConfig.Environment)
 
 	// start the server
 	if err = server.Start(ctx, e); err != nil {
