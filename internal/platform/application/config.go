@@ -2,6 +2,7 @@ package application
 
 import (
 	"os"
+	"strings"
 
 	_os "github.com/kieranroneill/oarbit/internal/platform/os"
 )
@@ -22,4 +23,16 @@ func NewConfig() Config {
 		Title:       _os.GetEnvWithDefault("APP_TITLE", "Oarbit"),
 		Version:     _os.GetEnvWithDefault("VERSION", "development"),
 	}
+}
+
+func (c Config) ParseMajorVersion() string {
+	version := strings.Clone(c.Version)
+
+	if i := strings.IndexAny(version, "-+"); i != -1 {
+		version = version[:i]
+	}
+
+	major, _, _ := strings.Cut(version, ".")
+
+	return major
 }

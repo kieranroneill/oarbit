@@ -10,7 +10,7 @@ import (
 )
 
 //==========================================
-// /boats/speecfications
+// /boats/specfications
 //==========================================
 
 func NewGetBoatSpecificationsRoute(db *bun.DB) echo.HandlerFunc {

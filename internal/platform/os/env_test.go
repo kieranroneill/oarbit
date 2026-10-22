@@ -42,7 +42,7 @@ func TestGetEnvWithDefault(t *testing.T) {
 
 			if expected != test.expected {
 				t.Errorf(
-					"expected \"%q\", actual \"%q\"",
+					`expected "%q", actual "%q"`,
 					expected,
 					test.expected,
 				)

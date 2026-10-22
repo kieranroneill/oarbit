@@ -65,22 +65,22 @@ func main() {
 	e.Use(middleware.RequestLogger())
 
 	// routes
-	// /api/
-	apiRouter := e.Group(http.APIPath)
-	// /api/boats/
+	// /api/v1/
+	apiRouter := e.Group(fmt.Sprintf("%s/v%s", http.APIPath, applicationConfig.ParseMajorVersion()))
+	// /api/v1/boats/
 	boatsRouter := apiRouter.Group(boat.Path)
-	// /api/boats/specifications
+	// /api/v1/boats/specifications
 	boatsRouter.GET(http.SpecificationsPath, boat.NewGetBoatSpecificationsRoute(database))
-	// /api/users/
+	// /api/v1/users/
 	usersRouter := apiRouter.Group(user.Path)
-	// /api/users/:user_id
-	// /api/users/:user_id/conversations
-	// /api/users/:user_id/conversations/chat
+	// /api/v1/users/:user_id
+	// /api/v1/users/:user_id/conversations
+	// /api/v1/users/:user_id/conversations/chat
 	usersRouter.POST(fmt.Sprintf("/:user_id%s%s", conversation.Path, conversation.ChatEndpoint), conversation.NewPostChatRoute(chatAdapter, database))
-	// /api/users/:user_id/conversations/:conversation_id
-	// /api/users/:user_id/conversations/:conversation_id/chat
+	// /api/v1/users/:user_id/conversations/:conversation_id
+	// /api/v1/users/:user_id/conversations/:conversation_id/chat
 	usersRouter.POST(fmt.Sprintf("/:user_id%s/:conversation_id%s", conversation.Path, conversation.ChatEndpoint), conversation.NewPostChatRoute(chatAdapter, database))
-	// /api/versions
+	// /api/v1/versions
 	apiRouter.GET(versions.Path, versions.NewGetVersionsRoute(applicationConfig))
 
 	// set up server
