@@ -7,8 +7,9 @@ declare namespace NodeJS {
 }
 
 interface ImportMetaEnv {
-  readonly VITE_APP_TITLE: string;
+  readonly VITE_DESCRIPTION: string;
   readonly VITE_LOG_LEVEL: string;
+  readonly VITE_TITLE: string;
 }
 
 interface ImportMeta {

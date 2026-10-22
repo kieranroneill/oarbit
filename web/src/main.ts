@@ -6,6 +6,10 @@ import { createRoot } from 'react-dom/client';
 // components
 import App from '@/containers/App';
 
+// fonts
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
+
 // styles
 import '@/styles/global.scss';
 

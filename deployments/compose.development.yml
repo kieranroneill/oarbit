@@ -127,8 +127,9 @@ services:
     environment:
       API_BASE_URL: ${API_BASE_URL:-http://api:3000}
       NODE_ENV: ${ENVIRONMENT:-development}
-      VITE_APP_TITLE: ${TITLE:-Oarbit}
+      VITE_DESCRIPTION: ${DESCRIPTION:-"Oarbit is an onboard knowledge and maintenance copilot that centralizes technical documents, service logs, and operational notes for your vessel."}
       VITE_LOG_LEVEL: ${LOG_LEVEL:-debug}
+      VITE_TITLE: ${TITLE:-Oarbit}
     image: kieranroneill/oarbit-web:development
     networks:
       - oarbit_network_dev
