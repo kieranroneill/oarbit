@@ -3,6 +3,7 @@ module github.com/kieranroneill/oarbit
 go 1.26.0
 
 require (
+	github.com/cloudwego/eino v0.9.22
 	github.com/cloudwego/eino-ext/components/model/ollama v0.1.9
 	github.com/google/uuid v1.6.0
 	github.com/labstack/echo/v5 v5.4.0
@@ -19,7 +20,6 @@ require (
 	github.com/bytedance/sonic/loader v0.5.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.6 // indirect
-	github.com/cloudwego/eino v0.9.22 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/eino-contrib/jsonschema v1.0.3 // indirect
 	github.com/eino-contrib/ollama v0.1.0 // indirect
