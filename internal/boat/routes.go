@@ -3,41 +3,25 @@ package boat
 import (
 	"net/http"
 
+	"github.com/kieranroneill/oarbit/internal/platform/application"
 	"github.com/labstack/echo/v5"
 	"github.com/uptrace/bun"
 
-	"github.com/kieranroneill/oarbit/internal/platform/httpclient"
+	_http "github.com/kieranroneill/oarbit/internal/platform/http"
 )
 
 func NewGetBoatSpecificationsRoute(db *bun.DB) echo.HandlerFunc {
 	return func(c *echo.Context) error {
-		ctx := c.Request().Context()
-		limit, offset, err := httpclient.ParseListParams(c)
-		if err != nil {
-			return err
-		}
-
-		service := NewService(db)
-		results, total, err := service.FindAll(ctx, limit, offset)
+		limit, offset, err := _http.ParseListParams(c)
 
 		if err != nil {
-			return c.NoContent(http.StatusInternalServerError)
-		}
-
-		if results == nil {
-			return c.JSON(http.StatusOK, httpclient.ListResponse[Specification]{
-				Items:  []Specification{},
-				Limit:  limit,
-				Offset: offset,
-				Total:  total,
+			return c.JSON(http.StatusBadRequest, _http.ErrorResponse{
+				Errors: []application.OarbitError{
+					application.NewOarbitError(application.NetworkRequestError, err.Error()),
+				},
 			})
 		}
 
-		return c.JSON(http.StatusOK, httpclient.ListResponse[Specification]{
-			Items:  results,
-			Limit:  limit,
-			Offset: offset,
-			Total:  total,
-		})
+		return NewController(db).Specifications(c, limit, offset)
 	}
 }

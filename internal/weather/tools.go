@@ -8,11 +8,12 @@ import (
 
 	"github.com/cloudwego/eino/components/tool"
 	"github.com/cloudwego/eino/components/tool/utils"
-	"github.com/kieranroneill/oarbit/internal/platform/httpclient"
+
+	_http "github.com/kieranroneill/oarbit/internal/platform/http"
 )
 
 //==========================================
-// get weather by location
+// get weather by location tool
 //==========================================
 
 type CurrentForecast struct {
@@ -63,7 +64,7 @@ func getWeatherByLocation(
 	var geoLocationResponseBody GeoLocationResponseBody
 	var weatherResponseBody ForecastResponseBody
 
-	httpClient := httpclient.NewHTTPClient(nil)
+	httpClient := _http.NewClient(nil)
 	geoParams := url.Values{}
 	geoParams.Set("name", params.City)
 	geoParams.Set("count", "1")

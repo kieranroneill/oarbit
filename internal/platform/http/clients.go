@@ -1,4 +1,4 @@
-package httpclient
+package http
 
 import (
 	"bytes"
@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-type HTTPClient struct {
+type Client struct {
 	Timeout time.Duration
 }
 
@@ -18,14 +18,14 @@ type HTTPClient struct {
  * constructor functions
  */
 
-func NewHTTPClient(timeout *time.Duration) *HTTPClient {
+func NewClient(timeout *time.Duration) *Client {
 	_timeout := time.Second * 10
 
 	if timeout != nil {
 		_timeout = *timeout
 	}
 
-	return &HTTPClient{
+	return &Client{
 		Timeout: _timeout,
 	}
 }
@@ -34,15 +34,15 @@ func NewHTTPClient(timeout *time.Duration) *HTTPClient {
  * public functions
  */
 
-func (c *HTTPClient) DoGetRequest(ctx context.Context, url string, body any, responseBody any) (*http.Response, error) {
+func (c *Client) DoGetRequest(ctx context.Context, url string, body any, responseBody any) (*http.Response, error) {
 	return c.DoRequest(ctx, http.MethodGet, url, body, responseBody)
 }
 
-func (c *HTTPClient) DoPostRequest(ctx context.Context, url string, body any, responseBody any) (*http.Response, error) {
+func (c *Client) DoPostRequest(ctx context.Context, url string, body any, responseBody any) (*http.Response, error) {
 	return c.DoRequest(ctx, http.MethodPost, url, body, responseBody)
 }
 
-func (c *HTTPClient) DoRequest(ctx context.Context, method string, url string, body any, responseBody any) (*http.Response, error) {
+func (c *Client) DoRequest(ctx context.Context, method string, url string, body any, responseBody any) (*http.Response, error) {
 	var requestBody io.Reader
 
 	_ctx, cancel := context.WithTimeout(ctx, c.Timeout)

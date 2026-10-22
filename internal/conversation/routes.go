@@ -3,9 +3,10 @@ package conversation
 import (
 	"net/http"
 
-	"github.com/kieranroneill/oarbit/internal/platform/agent"
 	"github.com/labstack/echo/v5"
 	"github.com/uptrace/bun"
+
+	"github.com/kieranroneill/oarbit/internal/platform/agent"
 )
 
 func NewPostChatRoute(chatAdapter *agent.ChatAdapter, db *bun.DB) echo.HandlerFunc {

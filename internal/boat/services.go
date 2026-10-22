@@ -2,6 +2,8 @@ package boat
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"log/slog"
 
 	"github.com/uptrace/bun"
@@ -9,12 +11,6 @@ import (
 
 type Service struct {
 	db *bun.DB
-}
-
-func NewService(db *bun.DB) *Service {
-	return &Service{
-		db: db,
-	}
 }
 
 /**
@@ -121,6 +117,16 @@ func toSpecification(model SpecificationModel) Specification {
 }
 
 /**
+ * constructor functions
+ */
+
+func NewService(db *bun.DB) *Service {
+	return &Service{
+		db: db,
+	}
+}
+
+/**
  * public functions
  */
 
@@ -134,6 +140,11 @@ func (s *Service) FindAll(ctx context.Context, limit int64, offset int64) ([]Spe
 		Limit(limit).
 		Offset(offset).
 		ScanAndCount(ctx)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return []Specification{}, 0, nil
+	}
+
 	if err != nil {
 		slog.Error("failed to find boat specifications", "error", err)
 

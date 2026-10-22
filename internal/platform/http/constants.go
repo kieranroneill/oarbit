@@ -1,4 +1,4 @@
-package httpclient
+package http
 
 const (
 	APIPath            string = "/api"

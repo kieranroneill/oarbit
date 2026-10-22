@@ -10,19 +10,27 @@ import (
 	"github.com/uptrace/bun"
 )
 
-/**
- * conversation
- */
+//==========================================
+// conversation repository
+//==========================================
 
 type ConversationRepository struct {
 	db bun.IDB
 }
+
+/**
+ * constructor functions
+ */
 
 func NewConversationRepository(db bun.IDB) *ConversationRepository {
 	return &ConversationRepository{
 		db: db,
 	}
 }
+
+/**
+ * public functions
+ */
 
 func (r *ConversationRepository) FindByIDAndUserIDWithMessages(ctx context.Context, id uuid.UUID, userID uuid.UUID) (*ConversationModel, error) {
 	conversation := new(ConversationModel)
@@ -67,19 +75,27 @@ func (r *ConversationRepository) Save(ctx context.Context, conversation *Convers
 	return nil
 }
 
-/**
- * conversation message
- */
+///==========================================
+// conversation message repository
+//==========================================
 
 type ConversationMessageRepository struct {
 	db bun.IDB
 }
+
+/**
+ * constructor functions
+ */
 
 func NewConversationMessageRepository(db bun.IDB) *ConversationMessageRepository {
 	return &ConversationMessageRepository{
 		db: db,
 	}
 }
+
+/**
+ * public functions
+ */
 
 // Save inserts a message and its tool calls. Use a transaction to save them atomically.
 func (r *ConversationMessageRepository) Save(ctx context.Context, message *ConversationMessageModel) error {
