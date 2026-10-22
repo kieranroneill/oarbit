@@ -36,7 +36,7 @@ services:
     build:
       context: ../
       dockerfile: ./build/package/migrations/Dockerfile
-    command: ["goose", "--dir", "migrations", "down"]
+    command: ['goose', '--dir', 'migrations', 'down']
     container_name: oarbit_migrations_down_dev
     depends_on:
       postgres:
@@ -55,7 +55,7 @@ services:
     build:
       context: ../
       dockerfile: ./build/package/migrations/Dockerfile
-    command: ["goose", "--dir", "migrations", "up"]
+    command: ['goose', '--dir', 'migrations', 'up']
     container_name: oarbit_migrations_up_dev
     depends_on:
       postgres:

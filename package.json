@@ -1,5 +1,6 @@
 {
   "name": "oarbit",
+  "version": "1.0.0",
   "private": true,
   "description": "Oarbit is an onboard knowledge and maintenance copilot that centralizes technical documents, service logs, and operational notes for your vessel.",
   "repository": {
@@ -41,6 +42,12 @@
     "@commitlint/cli": "^21.0.2",
     "@commitlint/config-conventional": "^21.0.2",
     "@commitlint/types": "^21.0.1",
+    "@semantic-release/changelog": "^7.0.0",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/exec": "^7.1.0",
+    "@semantic-release/git": "^11.0.1",
+    "@semantic-release/github": "^12.0.10",
+    "@semantic-release/release-notes-generator": "^14.1.1",
     "@tailwindcss/postcss": "^4.2.0",
     "@types/node": "^24",
     "@types/react": "^19",
@@ -49,6 +56,7 @@
     "lint-staged": "^17.0.7",
     "postcss": "^8.5",
     "prettier": "^3.4.3",
+    "semantic-release": "^25.0.9",
     "tailwindcss": "^4.2.0",
     "typescript": "5.7.3"
   }

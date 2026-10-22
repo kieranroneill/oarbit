@@ -6,7 +6,7 @@ on:
 
 jobs:
   validation_title:
-    name: 'Validation: Title'
+    name: 'Validation: Pull Request Title'
     runs-on: ubuntu-latest
     environment: Development
     steps:

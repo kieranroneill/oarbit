@@ -16,5 +16,7 @@ runs:
         cache: 'pnpm'
         cache-dependency-path: '**/pnpm-lock.yaml'
     - name: '📦 Install'
+      env:
+        HUSKY: '0' # disable husky
       run: pnpm install
       shell: bash
