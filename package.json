@@ -12,12 +12,11 @@
   },
   "packageManager": "pnpm@10.3.0",
   "scripts": {
-    "build": "next build web",
-    "dev": "next dev web -p 8080",
+    "build": "vite build web",
+    "dev": "vite web",
     "format": "prettier --write .",
     "lint": "eslint .",
-    "prepare": "husky",
-    "start": "next start web -p 8080"
+    "prepare": "husky"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
@@ -52,12 +51,16 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.1.2",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.7",
     "postcss": "^8.5",
     "prettier": "^3.4.3",
+    "sass-embedded": "^1.106.1",
     "semantic-release": "^25.0.9",
     "tailwindcss": "^4.2.0",
-    "typescript": "5.7.3"
+    "typescript": "5.7.3",
+    "vite": "^8.3.5",
+    "vite-tsconfig-paths": "^6.1.1"
   }
 }

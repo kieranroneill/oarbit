@@ -117,28 +117,28 @@ services:
     volumes:
       - ../.postgres:/var/lib/postgresql/data
 
-#  web:
-#    build:
-#      context: ../
-#      dockerfile: ./build/package/web/Dockerfile.development
-#    container_name: oarbit_web_dev
-#    depends_on:
-#      - api
-#    environment:
-#      API_BASE_URL: ${API_BASE_URL:-http://api:3000}
-#      NEXT_PUBLIC_APP_TITLE: ${TITLE:-Oarbit}
-#      NEXT_PUBLIC_LOG_LEVEL: ${LOG_LEVEL:-debug}
-#      NODE_ENV: development
-#    image: kieranroneill/oarbit-web:development
-#    networks:
-#      - oarbit_network_dev
-#    ports:
-#      - '8080:8080'
-#    volumes:
-#      # watch for changes on web source code
-#      - ../web:/app/web:cached
-#      - ../package.json:/app/package.json:cached
-#      - ../pnpm-lock.yaml:/app/pnpm-lock.yaml:cached
+  web:
+    build:
+      context: ../
+      dockerfile: ./build/package/web/Dockerfile.development
+    container_name: oarbit_web_dev
+    depends_on:
+      - api
+    environment:
+      API_BASE_URL: ${API_BASE_URL:-http://api:3000}
+      NODE_ENV: ${ENVIRONMENT:-development}
+      VITE_APP_TITLE: ${TITLE:-Oarbit}
+      VITE_LOG_LEVEL: ${LOG_LEVEL:-debug}
+    image: kieranroneill/oarbit-web:development
+    networks:
+      - oarbit_network_dev
+    ports:
+      - '8080:8080'
+    volumes:
+      # watch for changes on web source code
+      - ../web:/app/web:cached
+      - ../package.json:/app/package.json:cached
+      - ../pnpm-lock.yaml:/app/pnpm-lock.yaml:cached
 
 networks:
   oarbit_network_dev:
