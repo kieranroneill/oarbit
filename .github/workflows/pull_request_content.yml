@@ -1,0 +1,21 @@
+name: 'Pull Request: Content'
+
+on:
+  pull_request:
+    types: [edited, opened, synchronize]
+
+jobs:
+  validation_title:
+    name: 'Validation: Title'
+    runs-on: ubuntu-latest
+    environment: Development
+    steps:
+      - name: '🛎 Checkout'
+        uses: actions/checkout@v4
+      - name: '🔧 Setup Node'
+        uses: ./.github/actions/use-pnpm-dependencies
+      - name: '✅ Validate'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          echo "${PR_TITLE}" | pnpm exec commitlint

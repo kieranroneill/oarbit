@@ -1,24 +1,28 @@
-FROM python:3.11-slim
+FROM golang:1.26-alpine
+
+# install the required dependencies
+RUN apk update \
+    && apk add --no-cache git
+RUN go install github.com/githubnemo/CompileDaemon@latest
 
 WORKDIR /app
 
-# setup pip version
-COPY ./pip-requirements.txt .
-RUN pip install --no-cache-dir -r pip-requirements.txt
+# copy mod files to know which dependencies are needed
+COPY ./go.mod .
+COPY ./go.sum .
 
-# install dev dependencies
-COPY ./dev-requirements.txt .
-RUN pip install --no-cache-dir -r dev-requirements.txt
-
-# install dependencies
-COPY ./requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# download and verify dependencies
+RUN go mod download
+RUN go mod verify
 
 # copy source files
-COPY ./alembic.ini .
-COPY ./pyproject.toml .
-COPY ./api .
-COPY ./data .
-COPY ./migrations .
+COPY ./cmd .
+COPY ./internal .
+COPY ./VERSION .
 
-CMD ["python", "-m", "api.main"]
+# copy scripts
+COPY ./scripts/utilities/_set_vars.sh /_set_vars.sh
+COPY ./build/package/api/entrypoint-dev.sh /entrypoint-dev.sh
+RUN chmod +x /_set_vars.sh /entrypoint-dev.sh
+
+ENTRYPOINT ["/entrypoint-dev.sh"]

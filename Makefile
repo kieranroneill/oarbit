@@ -1,5 +1,7 @@
 SHELL := /bin/bash
 
+.PHONY: dev install install_go_deps install_go_dev_deps install_js_deps format format_go format_js migrations_down_dev migrations_up_dev test test_unit test_go_unit
+
 all: install
 
 ###
@@ -7,28 +9,22 @@ all: install
 ###
 
 install:
+	${MAKE} install_go_deps
+	${MAKE} install_go_dev_deps
 	${MAKE} install_js_deps
-	${MAKE} install_py_dev_deps
-	${MAKE} install_py_deps
+
+install_go_deps:
+	@echo ">>> installing go dependencies"
+	go mod download
+	go mod verify
+
+install_go_dev_deps:
+	@echo ">>> installing go dev dependencies"
+	go install github.com/pressly/goose/v3/cmd/goose@latest
 
 install_js_deps:
 	@echo ">>> installing javascript dependencies"
 	pnpm install
-
-install_py_dev_deps:
-	@echo ">>> installing python development dependencies"
-	python3 -m venv .venv
-	source .venv/bin/activate && \
-		pip install -r pip-requirements.txt && \
-		pip install -r dev-requirements.txt && \
-		deactivate
-
-install_py_deps:
-	@echo ">>> installing python dependencies"
-	python3 -m venv .venv
-	source .venv/bin/activate && \
-		pip install -r requirements.txt && \
-		deactivate
 
 ###
 # docker
@@ -37,93 +33,47 @@ install_py_deps:
 dev:
 	docker compose \
 	 	-f ./deployments/compose.development.yml \
-	 	--env-file .env.dev \
+	 	-p oarbit-dev \
+	 	--env-file ./configs/api/.env.dev \
+	 	--env-file ./configs/postgres/.env.dev \
+	 	--env-file ./configs/shared/.env.dev \
+	 	--env-file ./configs/web/.env.dev \
 		up \
 		--build
-
-start:
-	docker compose \
-		-f ./deployments/compose.yml \
-		--env-file .env \
-		up \
-		--build
-
-###
-# database
-###
-
-database_downgrade:
-	docker compose \
-		-f ./deployments/compose.yml \
-		run \
-		--build \
-		--rm api \
-		alembic downgrade -1
-
-database_downgrade_dev:
-	docker compose \
-		-f ./deployments/compose.development.yml \
-		run \
-		--build \
-		--rm api \
-		alembic downgrade -1
-
-database_upgrade:
-	docker compose \
-		-f ./deployments/compose.yml \
-		run \
-		--build \
-		--rm api \
-		alembic upgrade head
-
-database_upgrade_dev:
-	docker compose \
-		-f ./deployments/compose.development.yml \
-		run \
-		--build \
-		--rm api \
-		alembic upgrade head
-
-create_migration:
-	test -n "$(MESSAGE)" || (echo 'Usage: make create_migration MESSAGE="adds boats table"' && exit 1)
-	docker compose \
-		-f ./deployments/compose.development.yml \
-		 run \
-		--build \
-		 --rm api \
-		alembic revision --autogenerate -m "$(MESSAGE)"
 
 ###
 # formatting
 ###
 
 format:
+	${MAKE} format_go
 	${MAKE} format_js
-	${MAKE} format_py
+
+format_go:
+	@echo ">>> formatting go files"
+	gofmt -w .
 
 format_js:
 	@echo ">>> formatting javascript files"
 	pnpm format
 
-format_py:
-	@echo ">>> formatting python files"
-	python3 -m venv .venv
-	source .venv/bin/activate && \
-		python3 -m isort . && \
-		python3 -m black .
-
 ###
-# linting
+# database
 ###
 
-lint:
-	${MAKE} lint_py
+migrations_down_dev:
+	docker compose \
+		-f ./deployments/compose.development.yml \
+		-p oarbit-dev \
+		 run \
+		--rm migrations_down
 
-lint_py:
-	@echo ">>> linting python files"
-	python3 -m venv .venv
-	source .venv/bin/activate && \
-		python3 -m flake8 .
+migrations_up_dev:
+	docker compose \
+		-f ./deployments/compose.development.yml \
+	 	-p oarbit-dev \
+		run \
+		--rm migrations_up
 
 ###
 # testing
@@ -133,24 +83,8 @@ test:
 	${MAKE} test_unit
 
 test_unit:
-	${MAKE} test_py_unit
+	${MAKE} test_go_unit
 
-test_py_unit:
-	@echo ">>> running python unit tests"
-	python3 -m venv .venv
-	source .venv/bin/activate && \
-		python3 -m pytest -vv -s --log-cli-level=ERROR api
-
-###
-# misc.
-###
-
-run_api:
-	@echo ">>> running api"
-	python3 -m venv .venv
-	source .venv/bin/activate && \
-		python3 -m api.main
-
-run_web:
-	@echo ">>> running web"
-	pnpm start
+test_go_unit:
+	@echo ">>> running go unit tests"
+	go test -v ./...
