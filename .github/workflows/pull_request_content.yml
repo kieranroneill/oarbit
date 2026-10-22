@@ -2,7 +2,7 @@ name: 'Pull Request: Content'
 
 on:
   pull_request:
-    types: [edited, opened]
+    types: [edited, opened, synchronize]
 
 jobs:
   validation_title:
