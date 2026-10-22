@@ -1,6 +1,6 @@
 {
   "name": "oarbit",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1",
   "private": true,
   "description": "Oarbit is an onboard knowledge and maintenance copilot that centralizes technical documents, service logs, and operational notes for your vessel.",
   "repository": {
