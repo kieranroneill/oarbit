@@ -14,7 +14,7 @@ jobs:
   test_libs_utilities:
     name: 'Unit Tests: Go'
     runs-on: ubuntu-latest
-    environment: development
+    environment: Development
     steps:
       - name: '🛎 Checkout'
         uses: actions/checkout@v4
