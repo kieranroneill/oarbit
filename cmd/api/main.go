@@ -73,12 +73,12 @@ func main() {
 	boatsRouter.GET(http.SpecificationsPath, boat.NewGetBoatSpecificationsRoute(database))
 	// /api/users/
 	usersRouter := apiRouter.Group(user.Path)
-	// /api/users/{user_id}
-	// /api/users/{user_id}/conversations
-	// /api/users/{user_id}/conversations/chat
+	// /api/users/:user_id
+	// /api/users/:user_id/conversations
+	// /api/users/:user_id/conversations/chat
 	usersRouter.POST(fmt.Sprintf("/:user_id%s%s", conversation.Path, conversation.ChatEndpoint), conversation.NewPostChatRoute(chatAdapter, database))
-	// /api/users/{user_id}/conversations/{conversation_id}
-	// /api/users/{user_id}/conversations/{conversation_id}/chat
+	// /api/users/:user_id/conversations/:conversation_id
+	// /api/users/:user_id/conversations/:conversation_id/chat
 	usersRouter.POST(fmt.Sprintf("/:user_id%s/:conversation_id%s", conversation.Path, conversation.ChatEndpoint), conversation.NewPostChatRoute(chatAdapter, database))
 	// /api/versions
 	apiRouter.GET(versions.Path, versions.NewGetVersionsRoute(applicationConfig))

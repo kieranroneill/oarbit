@@ -9,6 +9,11 @@ import (
 	"github.com/kieranroneill/oarbit/internal/platform/agent"
 )
 
+//==========================================
+// /conversations/chat
+// /conversations/:conversation_id/chat
+//==========================================
+
 func NewPostChatRoute(chatAdapter *agent.ChatAdapter, db *bun.DB) echo.HandlerFunc {
 	return func(c *echo.Context) error {
 		var params ChatRequest
