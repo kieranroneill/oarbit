@@ -6,6 +6,9 @@ import { createRoot } from 'react-dom/client';
 // components
 import App from '@/containers/App';
 
+// enums
+import { LogLevelEnum } from '@/utilities/logging/createLogger';
+
 // fonts
 import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
@@ -17,10 +20,10 @@ import '@/styles/global.scss';
 import { en } from '@/translations';
 
 // utilities
-import createLogger from '@/utilities/createLogger';
+import createLogger from '@/utilities/logging/createLogger';
 
 export async function onDOMContentLoaded(): Promise<void> {
-  const logger = createLogger(import.meta.env.DEV ? 'debug' : 'error');
+  const logger = createLogger((import.meta.env.VITE_LOG_LEVEL as LogLevelEnum) ?? LogLevelEnum.Error);
   const rootElement = document.getElementById('root');
   let _i18n: i18n;
 
