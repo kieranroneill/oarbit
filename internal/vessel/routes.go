@@ -1,4 +1,4 @@
-package boat
+package vessel
 
 import (
 	"net/http"
@@ -13,7 +13,7 @@ import (
 // /boats/specfications
 //==========================================
 
-func NewGetBoatSpecificationsRoute(db *bun.DB) echo.HandlerFunc {
+func NewGetVesselSpecificationsRoute(db *bun.DB) echo.HandlerFunc {
 	return func(c *echo.Context) error {
 		limit, offset, errs := _http.ParseListParams(c)
 

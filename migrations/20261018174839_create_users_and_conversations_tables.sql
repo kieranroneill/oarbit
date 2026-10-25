@@ -6,7 +6,9 @@ CREATE TABLE users (
 
     active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    email TEXT NOT NULL
+    full_name TEXT NOT NULL
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    username TEXT NOT NULL
 );
 
 /* creates "conversations" table */

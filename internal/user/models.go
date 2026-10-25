@@ -16,5 +16,7 @@ type UserModel struct {
 	// data
 	Active    bool      `bun:"active,notnull,default:true"`
 	CreatedAt time.Time `bun:"created_at,type:timestamptz,nullzero,notnull,default:current_timestamp"`
-	Email     string    `bun:"email,notnull"`
+	FullName  string    `bun:"full_name,notnull"`
+	UpdatedAt time.Time `bun:"updated_at,type:timestamptz,nullzero,notnull,default:current_timestamp"`
+	Username  string    `bun:"username,notnull"`
 }

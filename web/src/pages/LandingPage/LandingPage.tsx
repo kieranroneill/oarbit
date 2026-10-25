@@ -1,7 +1,7 @@
 import { Button, Heading, Icon, VStack, Text } from '@chakra-ui/react';
 import { type FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link, useLoaderData } from 'react-router';
 
 // constants
 import { DEFAULT_GAP } from '@/constants';
@@ -12,11 +12,15 @@ import { ApplicationRouteEnum } from '@/enums/application';
 // icons
 import OBLogo from '@/icons/OBLogo';
 
+// loaders
+import type landingLoader from '@/loaders/landingLoader';
+
 // utilities
 import calculateIconSize from '@/utilities/ui/calculateIconSize';
 
 const LandingPage: FC = () => {
   const { t } = useTranslation();
+  const { setupRequired } = useLoaderData<ReturnType<typeof landingLoader>>();
   // memos
   const iconSize = useMemo(() => calculateIconSize('3xl'), []);
 
@@ -39,11 +43,15 @@ const LandingPage: FC = () => {
           <Link to={ApplicationRouteEnum.SetupRoute}>{t('labels.setup')}</Link>
         </Button>
 
-        <Text>{t('labels.or')}</Text>
+        {!setupRequired && (
+          <>
+            <Text>{t('labels.or')}</Text>
 
-        <Button asChild={true} colorPalette="primary" size="lg" width="full">
-          <Link to={ApplicationRouteEnum.LoginRoute}>{t('labels.login')}</Link>
-        </Button>
+            <Button asChild={true} colorPalette="primary" size="lg" width="full">
+              <Link to={ApplicationRouteEnum.LoginRoute}>{t('labels.login')}</Link>
+            </Button>
+          </>
+        )}
       </VStack>
     </VStack>
   );

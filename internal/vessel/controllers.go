@@ -1,4 +1,4 @@
-package boat
+package vessel
 
 import (
 	"net/http"

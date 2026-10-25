@@ -1,4 +1,4 @@
-package boat
+package vessel
 
 import (
 	"time"
@@ -35,6 +35,7 @@ type Profile struct {
 	ImageURI      *string       `json:"imageUri,omitempty"`
 	Name          string        `json:"name"`
 	UpdatedAt     time.Time     `json:"updatedAt"`
+	UserID        uuid.UUID     `json:"userID"`
 	Year          int           `json:"year"`
 }
 

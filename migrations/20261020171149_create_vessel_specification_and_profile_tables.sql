@@ -1,7 +1,7 @@
 -- +goose Up
 
-/* creates "boat_specifications" table */
-CREATE TABLE boat_specifications (
+/* creates "vessel_specifications" table */
+CREATE TABLE vessel_specifications (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     builder TEXT NULL,
@@ -46,14 +46,15 @@ CREATE TABLE boat_specifications (
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-CREATE INDEX ix_boat_specifications_make_model
-    ON boat_specifications (make, model);
+CREATE INDEX ix_vessel_specifications_make_model
+    ON vessel_specifications (make, model);
 
-/* creates "boat_profiles" table */
-CREATE TABLE boat_profiles (
+/* creates "vessel_profiles" table */
+CREATE TABLE vessel_profiles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     specification_id UUID NOT NULL,
+    user_id UUID NOT NULL,
 
     call_sign TEXT NULL,
     home_port TEXT NULL,
@@ -65,17 +66,24 @@ CREATE TABLE boat_profiles (
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_boat_profiles_specification
+    CONSTRAINT fk_vessel_profiles_specification
         FOREIGN KEY (specification_id)
-        REFERENCES boat_specifications (id)
+        REFERENCES vessel_specifications (id)
+        ON DELETE RESTRICT
+
+    CONSTRAINT fk_vessel_profiles_user
+        FOREIGN KEY (user_id)
+        REFERENCES users (id)
         ON DELETE RESTRICT
 );
-CREATE INDEX ix_boat_profiles_specification_id
-    ON boat_profiles (specification_id);
-CREATE UNIQUE INDEX uq_boat_profiles_hin
-    ON boat_profiles (hin);
+CREATE INDEX ix_vessel_profiles_specification_id
+    ON vessel_profiles (specification_id);
+CREATE INDEX ix_vessel_profiles_user_id
+    ON vessel_profiles (user_id);
+CREATE UNIQUE INDEX uq_vessel_profiles_hin
+    ON vessel_profiles (hin);
 
 -- +goose Down
 
-DROP TABLE IF EXISTS boat_profiles;
-DROP TABLE IF EXISTS boat_specifications;
+DROP TABLE IF EXISTS vessel_profiles;
+DROP TABLE IF EXISTS vessel_specifications;

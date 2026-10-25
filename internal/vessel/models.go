@@ -1,20 +1,22 @@
-package boat
+package vessel
 
 import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/kieranroneill/oarbit/internal/user"
 	"github.com/uptrace/bun"
 )
 
 type ProfileModel struct {
-	bun.BaseModel `bun:"table:boat_profiles,alias:bp"`
+	bun.BaseModel `bun:"table:vessel_profiles,alias:bp"`
 
 	// primary key
 	ID uuid.UUID `bun:"id,pk,type:uuid,default:gen_random_uuid()"`
 
 	// foreign keys
 	SpecificationID uuid.UUID `bun:"specification_id,type:uuid,notnull"`
+	UserID          uuid.UUID `bun:"user_id,type:uuid,notnull"`
 
 	// Data
 	CallSign  *string   `bun:"call_sign"`
@@ -28,10 +30,11 @@ type ProfileModel struct {
 
 	// relationships
 	Specification *SpecificationModel `bun:"rel:belongs-to,join:specification_id=id"`
+	User          *user.UserModel     `bun:"rel:belongs-to,join:user_id=id"`
 }
 
 type SpecificationModel struct {
-	bun.BaseModel `bun:"table:boat_specifications,alias:bs"`
+	bun.BaseModel `bun:"table:vessel_specifications,alias:bs"`
 
 	// primary key
 	ID uuid.UUID `bun:"id,pk,type:uuid,default:gen_random_uuid()"`

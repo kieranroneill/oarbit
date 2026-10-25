@@ -13,6 +13,7 @@ import PrivateLayout from '@/layouts/PrivateLayout';
 import PublicLayout from '@/layouts/PublicLayout';
 
 // loaders
+import landingLoader from '@/loaders/landingLoader';
 import loginLoader from '@/loaders/loginLoader';
 import privateLoader from '@/loaders/privateLoader';
 import setupLoader from '@/loaders/setupLoader';
@@ -38,6 +39,7 @@ export default function useRouter(logger: Logger): Router {
             children: [
               {
                 index: true,
+                loader: landingLoader(logger),
                 element: createElement(LandingPage),
               },
               {

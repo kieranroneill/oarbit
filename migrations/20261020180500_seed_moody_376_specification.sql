@@ -1,6 +1,6 @@
 -- +goose Up
 
-INSERT INTO boat_specifications (
+INSERT INTO vessel_specifications (
     id,
     builder,
     construction,
@@ -85,5 +85,5 @@ ON CONFLICT (id) DO NOTHING;
 
 -- +goose Down
 
-DELETE FROM boat_specifications
+DELETE FROM vessel_specifications
 WHERE id = '4b11f254-b2a5-4f6d-b442-452a2f6f6d12';

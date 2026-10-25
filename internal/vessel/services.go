@@ -1,4 +1,4 @@
-package boat
+package vessel
 
 import (
 	"context"
@@ -28,6 +28,7 @@ func toProfile(model ProfileModel) Profile {
 		ImageURI:  model.ImageURI,
 		CreatedAt: model.CreatedAt,
 		UpdatedAt: model.UpdatedAt,
+		UserID:    model.UserID,
 	}
 
 	if model.Specification != nil {

@@ -9,19 +9,18 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/kieranroneill/oarbit/internal/authentication"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 
-	"github.com/kieranroneill/oarbit/internal/boat"
+	"github.com/kieranroneill/oarbit/internal/authentication"
 	"github.com/kieranroneill/oarbit/internal/conversation"
 	"github.com/kieranroneill/oarbit/internal/platform/agent"
 	"github.com/kieranroneill/oarbit/internal/platform/application"
 	_http "github.com/kieranroneill/oarbit/internal/platform/http"
 	"github.com/kieranroneill/oarbit/internal/platform/logging"
 	"github.com/kieranroneill/oarbit/internal/platform/postgres"
-	"github.com/kieranroneill/oarbit/internal/user"
 	"github.com/kieranroneill/oarbit/internal/versions"
+	"github.com/kieranroneill/oarbit/internal/vessel"
 )
 
 func main() {
@@ -68,25 +67,27 @@ func main() {
 	// routes
 	// /api/v1/
 	apiRouter := e.Group(fmt.Sprintf("%s/v%s", _http.APIPath, applicationConfig.ParseMajorVersion()))
+
 	// /api/v1/auth/
 	authenticationRouter := apiRouter.Group(authentication.Path)
 	// /api/v1/auth/status
 	authenticationRouter.GET(authentication.StatusEndpoint, authentication.NewGetAuthenticationStatusRoute(database))
-	// /api/v1/boats/
-	boatsRouter := apiRouter.Group(boat.Path)
-	// /api/v1/boats/specifications
-	boatsRouter.GET(_http.SpecificationsPath, boat.NewGetBoatSpecificationsRoute(database))
-	// /api/v1/users/
-	usersRouter := apiRouter.Group(user.Path)
-	// /api/v1/users/:user_id
-	// /api/v1/users/:user_id/conversations
-	// /api/v1/users/:user_id/conversations/chat
-	usersRouter.POST(fmt.Sprintf("/:user_id%s%s", conversation.Path, conversation.ChatEndpoint), conversation.NewPostChatRoute(chatAdapter, database))
-	// /api/v1/users/:user_id/conversations/:conversation_id
-	// /api/v1/users/:user_id/conversations/:conversation_id/chat
-	usersRouter.POST(fmt.Sprintf("/:user_id%s/:conversation_id%s", conversation.Path, conversation.ChatEndpoint), conversation.NewPostChatRoute(chatAdapter, database))
+
+	// /api/v1/conversations/
+	conversationsRouter := apiRouter.Group(conversation.Path)
+	// /api/v1/conversations/chat
+	conversationsRouter.POST(fmt.Sprintf("%s%s", conversation.Path, conversation.ChatEndpoint), conversation.NewPostChatRoute(chatAdapter, database))
+	// /api/v1/conversations/:conversation_id
+	// /api/v1/conversations/:conversation_id/chat
+	conversationsRouter.POST(fmt.Sprintf("%s/:conversation_id%s", conversation.Path, conversation.ChatEndpoint), conversation.NewPostChatRoute(chatAdapter, database))
+
 	// /api/v1/versions
 	apiRouter.GET(versions.Path, versions.NewGetVersionsRoute(applicationConfig))
+
+	// /api/v1/vessels/
+	vesselsRouter := apiRouter.Group(vessel.Path)
+	// /api/v1/vessels/specifications
+	vesselsRouter.GET(_http.SpecificationsPath, vessel.NewGetVesselSpecificationsRoute(database))
 
 	// set up server
 	server := echo.StartConfig{
