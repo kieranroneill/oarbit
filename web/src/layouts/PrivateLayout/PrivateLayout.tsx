@@ -2,7 +2,10 @@ import { Center } from '@chakra-ui/react';
 import { type FC } from 'react';
 import { Outlet } from 'react-router';
 
-const PrivateLayout: FC = () => {
+// types
+import type { LayoutProps } from '@/types/application';
+
+const PrivateLayout: FC<LayoutProps> = () => {
   return (
     <Center as="main" minH="100dvh">
       <Outlet />

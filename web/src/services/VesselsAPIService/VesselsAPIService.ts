@@ -20,8 +20,8 @@ export default class VesselsAPIService extends BaseAPIService {
    * public methods
    */
 
-  public async getVesselSpecifications(options?: RequestOptions): Promise<ListResponse<VesselSpecification>> {
-    const __functionName = 'getVesselSpecifications';
+  public async specifications(options?: RequestOptions): Promise<ListResponse<VesselSpecification>> {
+    const __functionName = 'specifications';
     let response: Response;
     let _error: string;
 

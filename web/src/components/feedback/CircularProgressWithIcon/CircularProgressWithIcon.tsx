@@ -2,7 +2,7 @@ import { AbsoluteCenter, Icon, ProgressCircle } from '@chakra-ui/react';
 import { type FC, useMemo } from 'react';
 
 // hooks
-import useSubTextColor from '@/hooks/platform/ui/useSubTextColor';
+import useSubTextColor from '@/hooks/ui/useSubTextColor';
 
 // types
 import type { Props } from './types';

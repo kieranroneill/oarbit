@@ -15,10 +15,13 @@ import OBLogo from '@/icons/OBLogo';
 // loaders
 import type landingLoader from '@/loaders/landingLoader';
 
+// types
+import type { PageProps } from '@/types/application';
+
 // utilities
 import calculateIconSize from '@/utilities/ui/calculateIconSize';
 
-const LandingPage: FC = () => {
+const LandingPage: FC<PageProps> = () => {
   const { t } = useTranslation();
   const { setupRequired } = useLoaderData<ReturnType<typeof landingLoader>>();
   // memos
@@ -37,7 +40,7 @@ const LandingPage: FC = () => {
 
       {/*setup or login ctas*/}
       <VStack gap={DEFAULT_GAP - 2} width="full">
-        <Text>{t('captions.landingPageChoice')}</Text>
+        {!setupRequired && <Text>{t('captions.landingPageChoice')}</Text>}
 
         <Button asChild={true} colorPalette="primary" size="lg" width="full">
           <Link to={ApplicationRouteEnum.SetupRoute}>{t('labels.setup')}</Link>

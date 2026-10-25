@@ -1,5 +1,5 @@
 // services
-import VesselAPIService from '@/services/VesselAPIService';
+import VesselAPIService from '@/services/VesselsAPIService';
 
 // types
 import type { ListResponse } from '@/types/http';
@@ -23,7 +23,7 @@ export default function fetchVesselSpecifications({
     }));
 
     try {
-      results = await apiService.getVesselSpecifications();
+      results = await apiService.specifications();
 
       logger.debug(`${__functionName}:`, results);
 

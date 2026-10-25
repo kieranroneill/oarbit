@@ -8,6 +8,7 @@ import { STORE_NAME } from '@/constants';
 import { LogLevelEnum } from '@/utilities/logging/createLogger';
 
 // slices
+import createApplicationSlice from '@/slices/createApplicationSlice';
 import createVesselSlice from '@/slices/createVesselSlice';
 
 // types
@@ -16,7 +17,7 @@ import type { PersistedState, SliceOptions, Store } from '@/types/store';
 // utilities
 import createLogger from '@/utilities/logging/createLogger';
 
-export default function useStore(): StoreApi<Store> {
+export default function createStore(): StoreApi<Store> {
   const sliceOptions: SliceOptions = {
     logger: createLogger((import.meta.env.VITE_LOG_LEVEL as LogLevelEnum) ?? LogLevelEnum.Error),
   };
@@ -25,6 +26,7 @@ export default function useStore(): StoreApi<Store> {
     devtools(
       persist(
         (...api) => ({
+          ...createApplicationSlice(sliceOptions)(...api),
           ...createVesselSlice(sliceOptions)(...api),
         }),
         {

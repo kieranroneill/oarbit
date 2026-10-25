@@ -1,6 +1,9 @@
 import { type FC } from 'react';
 
-const DashboardPage: FC = () => {
+// types
+import type { PageProps } from '@/types/application';
+
+const DashboardPage: FC<PageProps> = () => {
   return <section>Setup or login?</section>;
 };
 

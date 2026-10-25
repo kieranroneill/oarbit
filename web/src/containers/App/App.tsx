@@ -4,17 +4,22 @@ import { type FC } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { RouterProvider } from 'react-router/dom';
 
-// hooks
-import useRouter from '@/hooks/platform/application/useRouter';
-import useSystem from '@/hooks/platform/application/useSystem';
+// utilities
+import createRouter from '@/utilities/application/createRouter';
+import createStore from '@/utilities/application/createStore';
+import createSystem from '@/utilities/application/createSystem';
 
 // types
 import type { Props } from './types';
 
 const App: FC<Props> = ({ i18n, logger }) => {
   // hooks
-  const router = useRouter(logger);
-  const system = useSystem();
+  const store = createStore();
+  const router = createRouter({
+    logger,
+    store,
+  });
+  const system = createSystem();
 
   return (
     <ChakraProvider value={system}>

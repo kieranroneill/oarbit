@@ -1,6 +1,9 @@
 import { type FC } from 'react';
 
-const SetupPage: FC = () => {
+// types
+import type { PageProps } from '@/types/application';
+
+const SetupPage: FC<PageProps> = () => {
   return <section>Setup</section>;
 };
 

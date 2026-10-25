@@ -1,7 +1,7 @@
-import { createSystem, defaultConfig, SystemContext } from '@chakra-ui/react';
+import { createSystem as createChakraSystem, defaultConfig, SystemContext } from '@chakra-ui/react';
 
-export default function useSystem(): SystemContext {
-  return createSystem(defaultConfig, {
+export default function createSystem(): SystemContext {
+  return createChakraSystem(defaultConfig, {
     globalCss: {
       html: {
         scrollBehavior: 'smooth',

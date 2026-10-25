@@ -4,6 +4,7 @@ enum APIRouteEnum {
   ChatPath = '/chat',
   SpecificationsPath = '/specifications',
   StatusPath = '/status',
+  VersionsPath = '/versions',
   VesselsPath = '/vessels',
 }
 
