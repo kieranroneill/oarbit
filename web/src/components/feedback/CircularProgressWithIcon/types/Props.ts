@@ -1,8 +1,5 @@
 import type { IconType } from 'react-icons';
 
-// types
-import type { IBaseComponentProps } from '@common/types';
-
 /**
  * @property {IconType} icon - the icon to use in the centre.
  * @property {string} iconColor - [optional] the color of the icon. Defaults to the default text color.
@@ -10,7 +7,7 @@ import type { IBaseComponentProps } from '@common/types';
  * is the total. If this value is omitted, the progress will be indeterminate.
  * @property {string} progressColor - [optional] the color of the progress bar. Defaults to the primary color.
  */
-interface Props extends IBaseComponentProps {
+interface Props {
   icon: IconType;
   iconColor?: string;
   progress?: [number, number];

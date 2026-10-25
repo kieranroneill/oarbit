@@ -1,1 +1,1 @@
-export type { default as IProps } from './Props';
+export type { default as Props } from './Props';

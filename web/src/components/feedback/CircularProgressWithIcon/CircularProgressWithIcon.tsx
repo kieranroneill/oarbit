@@ -1,39 +1,64 @@
-import { CircularProgress, CircularProgressLabel, Icon, useColorModeValue } from '@chakra-ui/react';
-import React, { FC } from 'react';
+import { AbsoluteCenter, Icon, ProgressCircle } from '@chakra-ui/react';
+import { type FC, useMemo } from 'react';
 
 // hooks
-import usePrimaryColor from '@common/hooks/usePrimaryColor';
-import useSubTextColor from '@common/hooks/useSubTextColor';
+import useSubTextColor from '@/hooks/platform/ui/useSubTextColor';
 
 // types
-import type { IProps } from './types';
+import type { Props } from './types';
+import type { Theme } from '@/types/ui';
 
-// utils
-import calculateIconSize from '@common/utils/calculateIconSize';
+// utilities
+import calculateIconSize from '@/utilities/ui/calculateIconSize';
 
-const CircularProgressWithIcon: FC<IProps> = ({ colorMode, icon, iconColor, progress, progressColor }) => {
+const CircularProgressWithIcon: FC<Props> = ({ icon, iconColor, progress, progressColor }) => {
   // hooks
-  const primaryColor = usePrimaryColor(colorMode);
-  const subTextColor = useSubTextColor(colorMode);
-  const trackColor = useColorModeValue('gray.300', 'whiteAlpha.400');
-  // misc
-  const iconSize = calculateIconSize('lg');
+  const subTextColor = useSubTextColor();
+  // memos
+  const iconSize = useMemo(() => calculateIconSize('lg'), []);
+  const trackColor = useMemo(
+    () =>
+      ({
+        light: 'gray.300',
+        dark: 'whiteAlpha.400',
+      }) satisfies Theme,
+    []
+  );
+  const value = useMemo(
+    () => (progress ? (progress[1] > 0 ? (progress[0] / progress[1]) * 100 : 0) : null),
+    [progress]
+  );
 
   return (
-    <CircularProgress
-      color={progressColor || primaryColor}
-      isIndeterminate={!progress}
-      size="100px"
-      thickness="4px"
-      trackColor={trackColor}
-      {...(progress && {
-        value: progress[1] > 0 ? (progress[0] / progress[1]) * 100 : 0,
-      })}
-    >
-      <CircularProgressLabel alignItems="center" display="flex" justifyContent="center">
-        <Icon as={icon} color={iconColor || subTextColor} h={iconSize} w={iconSize} />
-      </CircularProgressLabel>
-    </CircularProgress>
+    <ProgressCircle.Root value={value} aria-label="Progress">
+      <ProgressCircle.Circle
+        css={{
+          '--size': '100px',
+          '--thickness': '4px',
+        }}
+      >
+        <ProgressCircle.Track
+          stroke={{
+            _dark: trackColor.dark,
+            base: trackColor.light,
+          }}
+        />
+        <ProgressCircle.Range stroke={progressColor || 'primary.solid'} />
+      </ProgressCircle.Circle>
+
+      <AbsoluteCenter>
+        <Icon
+          as={icon}
+          color={
+            iconColor || {
+              _dark: subTextColor.dark,
+              base: subTextColor.light,
+            }
+          }
+          boxSize={iconSize}
+        />
+      </AbsoluteCenter>
+    </ProgressCircle.Root>
   );
 };
 

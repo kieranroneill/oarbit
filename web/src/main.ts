@@ -13,9 +13,6 @@ import { LogLevelEnum } from '@/utilities/logging/createLogger';
 import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
 
-// styles
-import '@/styles/global.scss';
-
 // translations
 import { en } from '@/translations';
 
