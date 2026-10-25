@@ -1,4 +1,4 @@
-import I18next, { type i18n } from 'i18next';
+import I18next, { type i18n as I18n } from 'i18next';
 import { createElement } from 'react';
 import { initReactI18next } from 'react-i18next';
 import { createRoot } from 'react-dom/client';
@@ -25,7 +25,7 @@ import createLogger from '@/utilities/logging/createLogger';
 export async function onDOMContentLoaded(): Promise<void> {
   const logger = createLogger((import.meta.env.VITE_LOG_LEVEL as LogLevelEnum) ?? LogLevelEnum.Error);
   const rootElement = document.getElementById('root');
-  let _i18n: i18n;
+  let i18n: I18n;
 
   if (!rootElement) {
     logger.error(`failed to find "root" element to render react app`);
@@ -33,9 +33,9 @@ export async function onDOMContentLoaded(): Promise<void> {
     return;
   }
 
-  _i18n = I18next.use(initReactI18next);
+  i18n = I18next.use(initReactI18next);
 
-  await _i18n.init({
+  await i18n.init({
     fallbackLng: 'en',
     debug: true,
     interpolation: {
@@ -50,7 +50,8 @@ export async function onDOMContentLoaded(): Promise<void> {
 
   createRoot(rootElement).render(
     createElement(App, {
-      i18n: _i18n,
+      i18n,
+      logger,
     })
   );
 }

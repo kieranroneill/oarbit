@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/kieranroneill/oarbit/internal/authentication"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 
@@ -67,6 +68,10 @@ func main() {
 	// routes
 	// /api/v1/
 	apiRouter := e.Group(fmt.Sprintf("%s/v%s", _http.APIPath, applicationConfig.ParseMajorVersion()))
+	// /api/v1/auth/
+	authenticationRouter := apiRouter.Group(authentication.Path)
+	// /api/v1/auth/status
+	authenticationRouter.GET(authentication.StatusEndpoint, authentication.NewGetAuthenticationStatusRoute(database))
 	// /api/v1/boats/
 	boatsRouter := apiRouter.Group(boat.Path)
 	// /api/v1/boats/specifications
