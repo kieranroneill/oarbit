@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/kieranroneill/oarbit/internal/user"
 	"github.com/uptrace/bun"
 )
 
@@ -16,7 +15,6 @@ type ProfileModel struct {
 
 	// foreign keys
 	SpecificationID uuid.UUID `bun:"specification_id,type:uuid,notnull"`
-	UserID          uuid.UUID `bun:"user_id,type:uuid,notnull"`
 
 	// Data
 	CallSign  *string   `bun:"call_sign"`
@@ -30,7 +28,6 @@ type ProfileModel struct {
 
 	// relationships
 	Specification *SpecificationModel `bun:"rel:belongs-to,join:specification_id=id"`
-	User          *user.UserModel     `bun:"rel:belongs-to,join:user_id=id"`
 }
 
 type SpecificationModel struct {

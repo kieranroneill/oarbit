@@ -28,7 +28,6 @@ func toProfile(model ProfileModel) Profile {
 		ImageURI:  model.ImageURI,
 		CreatedAt: model.CreatedAt,
 		UpdatedAt: model.UpdatedAt,
-		UserID:    model.UserID,
 	}
 
 	if model.Specification != nil {
@@ -131,7 +130,7 @@ func NewService(db *bun.DB) *Service {
  * public functions
  */
 
-func (s *Service) FindAll(ctx context.Context, limit int64, offset int64) ([]Specification, int64, error) {
+func (s *Service) FindSpecifications(ctx context.Context, limit int64, offset int64) ([]Specification, int64, error) {
 	var models []SpecificationModel
 
 	results := make([]Specification, 0)

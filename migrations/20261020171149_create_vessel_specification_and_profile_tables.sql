@@ -54,7 +54,6 @@ CREATE TABLE vessel_profiles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     specification_id UUID NOT NULL,
-    user_id UUID NOT NULL,
 
     call_sign TEXT NULL,
     home_port TEXT NULL,
@@ -70,16 +69,9 @@ CREATE TABLE vessel_profiles (
         FOREIGN KEY (specification_id)
         REFERENCES vessel_specifications (id)
         ON DELETE RESTRICT
-
-    CONSTRAINT fk_vessel_profiles_user
-        FOREIGN KEY (user_id)
-        REFERENCES users (id)
-        ON DELETE RESTRICT
 );
 CREATE INDEX ix_vessel_profiles_specification_id
     ON vessel_profiles (specification_id);
-CREATE INDEX ix_vessel_profiles_user_id
-    ON vessel_profiles (user_id);
 CREATE UNIQUE INDEX uq_vessel_profiles_hin
     ON vessel_profiles (hin);
 

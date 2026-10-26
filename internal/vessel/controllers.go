@@ -30,7 +30,7 @@ func NewController(db *bun.DB) *Controller {
 
 func (ctr *Controller) Specifications(c *echo.Context, limit int64, offset int64) error {
 	ctx := c.Request().Context()
-	results, total, err := ctr.service.FindAll(ctx, limit, offset)
+	results, total, err := ctr.service.FindSpecifications(ctx, limit, offset)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, _http.ErrorResponse{
