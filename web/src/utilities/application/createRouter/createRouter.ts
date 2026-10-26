@@ -13,7 +13,7 @@ import PrivateLayout from '@/layouts/PrivateLayout';
 import PublicLayout from '@/layouts/PublicLayout';
 
 // loaders
-import landingLoader from '@/loaders/landingLoader';
+import indexLoader from '@/loaders/indexLoader';
 import loginLoader from '@/loaders/loginLoader';
 import privateLoader from '@/loaders/privateLoader';
 import setupLoader from '@/loaders/setupLoader';
@@ -23,8 +23,8 @@ import versionsMiddleware from '@/middlewares/versionsMiddleware';
 
 // pages
 import DashboardPage from '@/pages/DashboardPage';
-import LandingPage from '@/pages/LandingPage';
 import LoginPage from '@/pages/LoginPage';
+import PublicIndexPage from '@/pages/PublicIndexPage';
 import SetupPage from '@/pages/SetupPage';
 
 // types
@@ -45,8 +45,8 @@ export default function createRouter({ logger, store }: Options): Router {
             children: [
               {
                 index: true,
-                loader: landingLoader(logger),
-                element: createElement(LandingPage, basePageProps),
+                loader: indexLoader(logger),
+                element: createElement(PublicIndexPage, basePageProps),
               },
               {
                 path: ApplicationRouteEnum.SetupRoute,

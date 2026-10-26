@@ -13,7 +13,7 @@ import { ApplicationRouteEnum } from '@/enums/application';
 import OBLogo from '@/icons/OBLogo';
 
 // loaders
-import type landingLoader from '@/loaders/landingLoader';
+import type indexLoader from '@/loaders/indexLoader';
 
 // types
 import type { PageProps } from '@/types/application';
@@ -21,9 +21,9 @@ import type { PageProps } from '@/types/application';
 // utilities
 import calculateIconSize from '@/utilities/ui/calculateIconSize';
 
-const LandingPage: FC<PageProps> = () => {
+const PublicIndexPage: FC<PageProps> = () => {
   const { t } = useTranslation();
-  const { setupRequired } = useLoaderData<ReturnType<typeof landingLoader>>();
+  const { setupRequired } = useLoaderData<ReturnType<typeof indexLoader>>();
   // memos
   const iconSize = useMemo(() => calculateIconSize('3xl'), []);
 
@@ -40,26 +40,20 @@ const LandingPage: FC<PageProps> = () => {
 
       {/*setup or login ctas*/}
       <VStack gap={DEFAULT_GAP - 2} width="full">
-        {!setupRequired && <Text>{t('captions.landingPageChoice')}</Text>}
-
-        <Button asChild={true} colorPalette="primary" size="lg" width="full">
-          <Link to={ApplicationRouteEnum.SetupRoute}>{t('labels.setup')}</Link>
-        </Button>
-
-        {!setupRequired && (
-          <>
-            <Text>{t('labels.or')}</Text>
-
-            <Button asChild={true} colorPalette="primary" size="lg" width="full">
-              <Link to={ApplicationRouteEnum.LoginRoute}>{t('labels.login')}</Link>
-            </Button>
-          </>
+        {setupRequired ? (
+          <Button asChild={true} colorPalette="primary" size="lg" width="full">
+            <Link to={ApplicationRouteEnum.SetupRoute}>{t('labels.setup')}</Link>
+          </Button>
+        ) : (
+          <Button asChild={true} colorPalette="primary" size="lg" width="full">
+            <Link to={ApplicationRouteEnum.LoginRoute}>{t('labels.login')}</Link>
+          </Button>
         )}
       </VStack>
     </VStack>
   );
 };
 
-LandingPage.displayName = 'LandingPage';
+PublicIndexPage.displayName = 'LandingPage';
 
-export default LandingPage;
+export default PublicIndexPage;

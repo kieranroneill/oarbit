@@ -10,9 +10,9 @@ import AuthenticationAPIService from '@/services/AuthenticationAPIService';
 import type { AuthenticationStatus } from '@/types/authentication';
 import type { Logger } from '@/utilities/logging/createLogger';
 
-export default function landingLoader(logger: Logger): () => Promise<AuthenticationStatus> {
+export default function indexLoader(logger: Logger): () => Promise<AuthenticationStatus> {
   return async () => {
-    const __functionName = 'landingLoader';
+    const __functionName = 'indexLoader';
     const status = await new AuthenticationAPIService({
       logger,
     }).status();

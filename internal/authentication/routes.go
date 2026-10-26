@@ -14,7 +14,7 @@ import (
 func NewGetAuthenticationStatusRoute(db *bun.DB) echo.HandlerFunc {
 	return func(c *echo.Context) error {
 		return c.JSON(http.StatusOK, StatusResponse{
-			SetupRequired: false,
+			SetupRequired: true,
 			User:          nil,
 		})
 	}

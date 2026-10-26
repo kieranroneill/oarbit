@@ -2,9 +2,7 @@ export default {
   captions: {
     advisoryWarning: 'Assistant guidance is advisory. Verify against manuals and conditions before acting.',
     batteryStatus: 'Show me the current battery status.',
-    connecting: 'Connecting',
     engineCharging: 'Engine charging',
-    landingPageChoice: 'Would you like to:',
     loadingExpressions: [
       'Hoisting the sails...',
       'Weighing anchor...',
@@ -76,7 +74,6 @@ export default {
     logEntry: 'Create a log entry',
     login: 'Login',
     maintenanceChecklist: 'Find a maintenance checklist',
-    or: 'Or',
     powerUsage: 'Summarize power usage',
     quickTasks: 'Quick tasks',
     reserve: 'Reserve',
