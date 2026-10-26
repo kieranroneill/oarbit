@@ -96,10 +96,11 @@ func main() {
 	// /api/v1/auth/
 	authenticationRouter := apiRouter.Group(authentication.Path)
 	// /api/v1/auth/status
-	authenticationRouter.GET(authentication.StatusEndpoint, authentication.NewGetAuthenticationStatusRoute(postgresConnection, redisConnection))
+	authenticationRouter.GET(authentication.StatusEndpoint, authentication.NewGetAuthenticationStatusRoute(applicationConfig, postgresConnection, redisConnection))
 
 	// /api/v1/conversations/
 	conversationsRouter := apiRouter.Group(conversation.Path)
+	conversationsRouter.Use(authentication.NewAuthenticateMiddleware(applicationConfig, postgresConnection, redisConnection))
 	// /api/v1/conversations/chat
 	conversationsRouter.POST(fmt.Sprintf("%s%s", conversation.Path, conversation.ChatEndpoint), conversation.NewPostChatRoute(chatAdapter, postgresConnection))
 	// /api/v1/conversations/:conversation_id
