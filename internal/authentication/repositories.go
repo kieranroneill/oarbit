@@ -34,7 +34,7 @@ func NewSessionRepository(
  * private functions
  */
 
-func (repository *SessionRepository) key(key string) string {
+func (r *SessionRepository) key(key string) string {
 	return fmt.Sprintf("session:%s", key)
 }
 
@@ -42,7 +42,7 @@ func (repository *SessionRepository) key(key string) string {
  * public functions
  */
 
-func (repository *SessionRepository) Create(
+func (r *SessionRepository) Create(
 	ctx context.Context,
 	userId uuid.UUID,
 ) (*Session, error) {
@@ -53,21 +53,21 @@ func (repository *SessionRepository) Create(
 		IssuedAt:  now,
 		UserID:    userId,
 	}
-	key := repository.key(dto.ID.String())
+	key := r.key(dto.ID.String())
 	fields := map[string]interface{}{
 		"expiresAt": dto.ExpiresAt.UTC().Format(time.RFC3339),
 		"id":        dto.ID.String(),
 		"issuedAt":  dto.IssuedAt.UTC().Format(time.RFC3339),
-		"userId":    dto.UserID.ID(),
+		"userId":    dto.UserID.String(),
 	}
 
-	if err := repository.redisClient.HSet(ctx, key, fields).Err(); err != nil {
+	if err := r.redisClient.HSet(ctx, key, fields).Err(); err != nil {
 		return nil, fmt.Errorf("failed to create session: %w", err)
 	}
 
-	if err := repository.redisClient.Expire(ctx, key, SessionTTLInSeconds).Err(); err != nil {
+	if err := r.redisClient.Expire(ctx, key, SessionTTLInSeconds).Err(); err != nil {
 		// rollback if the expiration fails
-		_ = repository.redisClient.Del(ctx, key).Err()
+		_ = r.redisClient.Del(ctx, key).Err()
 
 		return nil, fmt.Errorf("failed to set session expiration: %w", err)
 	}
@@ -75,7 +75,7 @@ func (repository *SessionRepository) Create(
 	return &dto, nil
 }
 
-func (repository *SessionRepository) DeleteByID(
+func (r *SessionRepository) DeleteByID(
 	ctx context.Context,
 	id uuid.UUID,
 ) error {
@@ -85,7 +85,7 @@ func (repository *SessionRepository) DeleteByID(
 		return nil
 	}
 
-	deleted, err := repository.redisClient.Del(ctx, repository.key(id.String())).Result()
+	deleted, err := r.redisClient.Del(ctx, r.key(id.String())).Result()
 	if err != nil {
 		return fmt.Errorf("failed to delete session: %w", err)
 	}
@@ -101,12 +101,12 @@ func (repository *SessionRepository) DeleteByID(
 	return nil
 }
 
-func (repository *SessionRepository) FindByID(ctx context.Context, id uuid.UUID) (*Session, error) {
+func (r *SessionRepository) FindByID(ctx context.Context, id uuid.UUID) (*Session, error) {
 	if id == uuid.Nil {
 		return nil, nil
 	}
 
-	values, err := repository.redisClient.HGetAll(ctx, repository.key(id.String())).Result()
+	values, err := r.redisClient.HGetAll(ctx, r.key(id.String())).Result()
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to find session: %w", err)
@@ -150,14 +150,14 @@ func (repository *SessionRepository) FindByID(ctx context.Context, id uuid.UUID)
 	}, nil
 }
 
-func (repository *SessionRepository) SlideTimeoutByID(ctx context.Context, id uuid.UUID) (*Session, error) {
+func (r *SessionRepository) SlideTimeoutByID(ctx context.Context, id uuid.UUID) (*Session, error) {
 	if id == uuid.Nil {
 		slog.Debug("failed to update session, empty id")
 
 		return nil, nil
 	}
 
-	dto, err := repository.FindByID(ctx, id)
+	dto, err := r.FindByID(ctx, id)
 
 	if err != nil {
 		return nil, err
@@ -170,21 +170,21 @@ func (repository *SessionRepository) SlideTimeoutByID(ctx context.Context, id uu
 	}
 
 	dto.ExpiresAt = time.Now().Add(SessionTTLInSeconds)
-	key := repository.key(dto.ID.String())
+	key := r.key(dto.ID.String())
 	fields := map[string]interface{}{
 		"expiresAt": dto.ExpiresAt.UTC().Format(time.RFC3339),
 		"id":        dto.ID.String(),
 		"issuedAt":  dto.IssuedAt.UTC().Format(time.RFC3339),
-		"userId":    dto.UserID.ID(),
+		"userId":    dto.UserID.String(),
 	}
 
-	if err = repository.redisClient.HSet(ctx, key, fields).Err(); err != nil {
+	if err = r.redisClient.HSet(ctx, key, fields).Err(); err != nil {
 		return nil, fmt.Errorf("failed to update the session: %w", err)
 	}
 
-	if err = repository.redisClient.Expire(ctx, key, SessionTTLInSeconds).Err(); err != nil {
+	if err = r.redisClient.Expire(ctx, key, SessionTTLInSeconds).Err(); err != nil {
 		// rollback if the expiration fails
-		_ = repository.redisClient.Del(ctx, key).Err()
+		_ = r.redisClient.Del(ctx, key).Err()
 
 		return nil, fmt.Errorf("failed to set session expiration: %w", err)
 	}

@@ -6,20 +6,32 @@ import (
 	"errors"
 	"log/slog"
 
+	"github.com/google/uuid"
 	"github.com/uptrace/bun"
 )
 
 type Service struct {
-	db *bun.DB
+	db         *bun.DB
+	repository *Repository
 }
 
 /**
- * static private functions
+ * constructor functions
  */
 
-func toUser(model UserModel) User {
-	dto := User{
-		Active:    model.Active,
+func NewService(db *bun.DB) *Service {
+	return &Service{
+		db:         db,
+		repository: NewRepository(db),
+	}
+}
+
+/**
+ * private functions
+ */
+
+func toUser(model *UserModel) *User {
+	dto := &User{
 		ID:        model.ID,
 		CreatedAt: model.CreatedAt,
 		FullName:  model.FullName,
@@ -31,18 +43,24 @@ func toUser(model UserModel) User {
 }
 
 /**
- * constructor functions
- */
-
-func NewService(db *bun.DB) *Service {
-	return &Service{
-		db: db,
-	}
-}
-
-/**
  * public functions
  */
+
+func (s *Service) FindByID(ctx context.Context, id uuid.UUID) (*User, error) {
+	model, err := s.repository.FindByID(ctx, id)
+
+	if err != nil {
+		slog.Error("failed to find user by id", "error", err)
+
+		return nil, err
+	}
+
+	if model == nil {
+		return nil, nil
+	}
+
+	return toUser(model), nil
+}
 
 func (s *Service) Count(ctx context.Context) (int64, error) {
 	count, err := s.db.NewSelect().
@@ -54,7 +72,7 @@ func (s *Service) Count(ctx context.Context) (int64, error) {
 	}
 
 	if err != nil {
-		slog.Error("failed to find count users", "error", err)
+		slog.Error("failed to count users", "error", err)
 
 		return 0, err
 	}

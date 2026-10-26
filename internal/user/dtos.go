@@ -7,7 +7,6 @@ import (
 )
 
 type User struct {
-	Active    bool      `json:"active"`
 	CreatedAt time.Time `json:"createdAt"`
 	FullName  string    `json:"fullName"`
 	ID        uuid.UUID `json:"id"`

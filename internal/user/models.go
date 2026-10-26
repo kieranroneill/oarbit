@@ -14,7 +14,6 @@ type UserModel struct {
 	ID uuid.UUID `bun:"id,pk,type:uuid,default:gen_random_uuid()"`
 
 	// data
-	Active    bool      `bun:"active,notnull,default:true"`
 	CreatedAt time.Time `bun:"created_at,type:timestamptz,nullzero,notnull,default:current_timestamp"`
 	FullName  string    `bun:"full_name,notnull"`
 	UpdatedAt time.Time `bun:"updated_at,type:timestamptz,nullzero,notnull,default:current_timestamp"`
