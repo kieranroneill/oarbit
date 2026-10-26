@@ -20,6 +20,7 @@ import (
 	_http "github.com/kieranroneill/oarbit/internal/platform/http"
 	"github.com/kieranroneill/oarbit/internal/platform/logging"
 	"github.com/kieranroneill/oarbit/internal/platform/postgres"
+	"github.com/kieranroneill/oarbit/internal/platform/redis"
 	"github.com/kieranroneill/oarbit/internal/versions"
 	"github.com/kieranroneill/oarbit/internal/vessel"
 )
@@ -34,26 +35,45 @@ func main() {
 	defer stop()
 
 	applicationConfig := application.NewConfig()
-	databaseConfig := postgres.NewConfig()
+	postgresConfig := postgres.NewConfig()
+	redisConfig := redis.NewConfig()
 
 	// config logger
 	slog.SetLogLoggerLevel(logging.ParseLogLevel(applicationConfig.LogLevel))
 
 	// get database connection
-	database, err := postgres.NewConnection(ctx, databaseConfig)
+	postgresConnection, err := postgres.NewConnection(ctx, postgresConfig)
+
 	if err != nil {
 		slog.Error("failed to connect to postgres", "error", err)
 
 		return
 	}
+
 	defer func() {
-		if _err := database.Close(); _err != nil {
+		if _err := postgresConnection.Close(); _err != nil {
 			slog.Error("failed to close postgres connection", "error", err)
+		}
+	}()
+
+	// create redis connection
+	redisConnection, err := redis.NewConnection(ctx, redisConfig)
+
+	if err != nil {
+		slog.Error("failed to connect to redis", "error", err)
+
+		return
+	}
+
+	defer func() {
+		if _err := redisConnection.Close(); _err != nil {
+			slog.Error("failed to close redis connection", "error", err)
 		}
 	}()
 
 	// create agent connection
 	chatAdapter, err := agent.NewChatAdapter(context.Background())
+
 	if err != nil {
 		slog.Error("failed to connect to agent", "error", err)
 
@@ -76,15 +96,15 @@ func main() {
 	// /api/v1/auth/
 	authenticationRouter := apiRouter.Group(authentication.Path)
 	// /api/v1/auth/status
-	authenticationRouter.GET(authentication.StatusEndpoint, authentication.NewGetAuthenticationStatusRoute(database))
+	authenticationRouter.GET(authentication.StatusEndpoint, authentication.NewGetAuthenticationStatusRoute(postgresConnection, redisConnection))
 
 	// /api/v1/conversations/
 	conversationsRouter := apiRouter.Group(conversation.Path)
 	// /api/v1/conversations/chat
-	conversationsRouter.POST(fmt.Sprintf("%s%s", conversation.Path, conversation.ChatEndpoint), conversation.NewPostChatRoute(chatAdapter, database))
+	conversationsRouter.POST(fmt.Sprintf("%s%s", conversation.Path, conversation.ChatEndpoint), conversation.NewPostChatRoute(chatAdapter, postgresConnection))
 	// /api/v1/conversations/:conversation_id
 	// /api/v1/conversations/:conversation_id/chat
-	conversationsRouter.POST(fmt.Sprintf("%s/:conversation_id%s", conversation.Path, conversation.ChatEndpoint), conversation.NewPostChatRoute(chatAdapter, database))
+	conversationsRouter.POST(fmt.Sprintf("%s/:conversation_id%s", conversation.Path, conversation.ChatEndpoint), conversation.NewPostChatRoute(chatAdapter, postgresConnection))
 
 	// /api/v1/versions
 	apiRouter.GET(versions.Path, versions.NewGetVersionsRoute(applicationConfig))
@@ -92,17 +112,20 @@ func main() {
 	// /api/v1/vessels/
 	vesselsRouter := apiRouter.Group(vessel.Path)
 	// /api/v1/vessels/specifications
-	vesselsRouter.GET(_http.SpecificationsPath, vessel.NewGetVesselSpecificationsRoute(database))
+	vesselsRouter.GET(_http.SpecificationsPath, vessel.NewGetVesselSpecificationsRoute(postgresConnection))
 
 	// /app/*
 	if applicationConfig.Environment != "development" {
 		staticFiles := os.DirFS("/app/web/dist")
 
-		e.GET(application.Path, application.NewGetAppRoute(staticFiles))
-		e.GET(fmt.Sprintf("%s/*", application.Path), echo.WrapHandler(
-			http.StripPrefix(fmt.Sprintf("%s/", application.Path), http.FileServer(http.FS(staticFiles))),
+		e.GET(application.AppPath, application.NewGetAppRoute(staticFiles))
+		e.GET(fmt.Sprintf("%s/*", application.AppPath), echo.WrapHandler(
+			http.StripPrefix(fmt.Sprintf("%s/", application.AppPath), http.FileServer(http.FS(staticFiles))),
 		))
 	}
+
+	// /healthcheck
+	e.GET(application.HealthcheckPath, application.NewGetHealthcheckRoute())
 
 	// set up server
 	server := echo.StartConfig{

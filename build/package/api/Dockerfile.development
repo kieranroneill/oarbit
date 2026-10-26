@@ -2,7 +2,7 @@ FROM golang:1.26-alpine
 
 # install the required dependencies
 RUN apk update \
-    && apk add --no-cache git
+    && apk add --no-cache curl git
 RUN go install github.com/githubnemo/CompileDaemon@latest
 
 WORKDIR /app

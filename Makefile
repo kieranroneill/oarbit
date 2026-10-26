@@ -36,6 +36,7 @@ dev:
 	 	-p oarbit-dev \
 	 	--env-file ./configs/api/.env.dev \
 	 	--env-file ./configs/postgres/.env.dev \
+	 	--env-file ./configs/redis/.env.dev \
 	 	--env-file ./configs/shared/.env.dev \
 	 	--env-file ./configs/web/.env.dev \
 		up \

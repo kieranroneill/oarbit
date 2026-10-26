@@ -22,7 +22,18 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT:-5432}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_SSL_MODE: ${POSTGRES_SSL_MODE:-disable}
+      REDIS_DB: ${REDIS_DB:-0}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_USERNAME: ${REDIS_USERNAME:-redis}
       TITLE: ${TITLE:-Oarbit}
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://127.0.0.1:${API_PORT:-3000}/healthcheck']
+      interval: 5s
+      retries: 10
+      start_period: 10s
+      timeout: 5s
     image: kieranroneill/oarbit-api:development
     networks:
       - oarbit_network_dev
@@ -59,6 +70,8 @@ services:
     container_name: oarbit_migrations_up_dev
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     environment:
       GOOSE_DRIVER: postgres
@@ -117,13 +130,32 @@ services:
     volumes:
       - ../.postgres:/var/lib/postgresql/data
 
+  redis:
+    build:
+      context: ../
+      dockerfile: ./build/package/redis/Dockerfile
+    container_name: oarbit_redis_dev
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
+      REDIS_USERNAME: ${REDIS_USERNAME:-redis}
+    healthcheck:
+      test: [ 'CMD-SHELL', 'redis-cli --user ${REDIS_USERNAME:-redis} --pass ${REDIS_PASSWORD:-password} ping | grep PONG' ]
+      interval: 5s
+      retries: 10
+      timeout: 3s
+    networks:
+      - oarbit_network_dev
+    ports:
+      - '${REDIS_PORT:-6379}:${REDIS_PORT:-6379}'
+
   web:
     build:
       context: ../
       dockerfile: ./build/package/web/Dockerfile.development
     container_name: oarbit_web_dev
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     environment:
       API_BASE_URL: ${API_BASE_URL:-http://api:3000}
       NODE_ENV: ${ENVIRONMENT:-development}

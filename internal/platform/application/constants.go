@@ -1,5 +1,6 @@
 package application
 
 const (
-	Path string = "/app"
+	AppPath         string = "/app"
+	HealthcheckPath string = "/healthcheck"
 )

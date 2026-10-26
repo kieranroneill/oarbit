@@ -9,7 +9,7 @@ import (
 type User struct {
 	Active    bool      `json:"active"`
 	CreatedAt time.Time `json:"createdAt"`
-	FullName  time.Time `json:"fullName"`
+	FullName  string    `json:"fullName"`
 	ID        uuid.UUID `json:"id"`
 	UpdatedAt time.Time `json:"updatedAt"`
 	Username  string    `json:"username"`

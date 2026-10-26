@@ -7,6 +7,10 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
+//==========================================
+// /app
+//==========================================
+
 func NewGetAppRoute(staticFiles fs.FS) echo.HandlerFunc {
 	return func(c *echo.Context) error {
 		indexFile, err := staticFiles.Open("index.html")
@@ -17,5 +21,15 @@ func NewGetAppRoute(staticFiles fs.FS) echo.HandlerFunc {
 		defer indexFile.Close()
 
 		return c.Stream(http.StatusOK, "text/html", indexFile)
+	}
+}
+
+//==========================================
+// /healthcheck
+//==========================================
+
+func NewGetHealthcheckRoute() echo.HandlerFunc {
+	return func(c *echo.Context) error {
+		return c.NoContent(http.StatusOK)
 	}
 }
