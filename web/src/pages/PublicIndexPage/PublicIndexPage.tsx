@@ -28,32 +28,36 @@ const PublicIndexPage: FC<PageProps> = () => {
   const iconSize = useMemo(() => calculateIconSize('3xl'), []);
 
   return (
-    <VStack as="section" gap={DEFAULT_GAP + 6}>
-      {/*welcome message*/}
-      <VStack gap={DEFAULT_GAP - 2}>
-        <Icon as={OBLogo} boxSize={iconSize} />
+    <>
+      <title>{`${import.meta.env.VITE_TITLE} | ${t('captions.shortDescription')}`}</title>
 
-        <Heading size="3xl">{t('headings.welcome')}</Heading>
+      <VStack as="section" gap={DEFAULT_GAP + 6}>
+        {/*welcome message*/}
+        <VStack gap={DEFAULT_GAP - 2}>
+          <Icon as={OBLogo} boxSize={iconSize} />
 
-        <Text>{t('captions.welcomeDescription')}</Text>
+          <Heading size="3xl">{t('headings.welcome')}</Heading>
+
+          <Text>{t('captions.shortDescription')}</Text>
+        </VStack>
+
+        {/*setup or login ctas*/}
+        <VStack gap={DEFAULT_GAP - 2} width="full">
+          {setupRequired ? (
+            <Button asChild={true} colorPalette="primary" size="lg" width="full">
+              <Link to={ApplicationRouteEnum.SetupRoute}>{t('labels.setup')}</Link>
+            </Button>
+          ) : (
+            <Button asChild={true} colorPalette="primary" size="lg" width="full">
+              <Link to={ApplicationRouteEnum.LoginRoute}>{t('labels.login')}</Link>
+            </Button>
+          )}
+        </VStack>
       </VStack>
-
-      {/*setup or login ctas*/}
-      <VStack gap={DEFAULT_GAP - 2} width="full">
-        {setupRequired ? (
-          <Button asChild={true} colorPalette="primary" size="lg" width="full">
-            <Link to={ApplicationRouteEnum.SetupRoute}>{t('labels.setup')}</Link>
-          </Button>
-        ) : (
-          <Button asChild={true} colorPalette="primary" size="lg" width="full">
-            <Link to={ApplicationRouteEnum.LoginRoute}>{t('labels.login')}</Link>
-          </Button>
-        )}
-      </VStack>
-    </VStack>
+    </>
   );
 };
 
-PublicIndexPage.displayName = 'LandingPage';
+PublicIndexPage.displayName = 'PublicIndexPage';
 
 export default PublicIndexPage;

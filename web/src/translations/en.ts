@@ -38,11 +38,14 @@ export default {
       'Putting the kettle on in the galley...',
     ],
     logEntry: 'Create a log entry for departure from harbor.',
+    longDescription:
+      'Oarbit is your onboard knowledge and maintenance copilot that centralizes technical documents, service logs, and operational notes for your vessel.',
     maintenanceChecklist: 'Find the maintenance checklist for the engine.',
     onboardContext: 'Live vessel status, weather, power, and maintenance',
     openNavigation: 'Open Navigation',
     powerUsage: "Summarize today's power usage.",
     shorePower: 'Shore power',
+    shortDescription: 'Your onboard knowledge and maintenance copilot.',
     sidebar: 'Vessel summary, conversations, and navigation',
     solarPower: 'Solar power',
     suggestedPrompts: [
@@ -56,7 +59,6 @@ export default {
     thinking: 'Thinking',
     troubleshoot: 'Help me troubleshoot a system on board.',
     weather: 'What weather should I pay attention to today?',
-    welcomeDescription: 'Your onboard knowledge and maintenance copilot.',
     welcomeHint: 'Ask about maintenance, systems, power, weather, or your logbook. {{vessel}} I know this boat.',
   },
   headings: {
@@ -87,12 +89,8 @@ export default {
     weather: 'Check weather',
   },
   titles: {
-    instruments: 'Instruments',
-    logbook: 'Recent log',
-    maintenance: 'Maintenance',
-    navigation: 'Navigation',
-    onboardContext: 'Onboard Context',
-    power: 'Power',
-    Vessel: 'Vessel',
+    dashboard: 'Dashboard',
+    login: 'Login',
+    setup: 'Setup',
   },
 } satisfies Record<string, unknown>;

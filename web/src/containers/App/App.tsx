@@ -22,13 +22,17 @@ const App: FC<Props> = ({ i18n, logger }) => {
   const system = createSystem();
 
   return (
-    <ChakraProvider value={system}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem={true}>
-        <I18nextProvider i18n={i18n}>
-          <RouterProvider router={router} />
-        </I18nextProvider>
-      </ThemeProvider>
-    </ChakraProvider>
+    <>
+      <meta name="description" content={i18n.t('captions.longDescription')} />
+
+      <ChakraProvider value={system}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem={true}>
+          <I18nextProvider i18n={i18n}>
+            <RouterProvider router={router} />
+          </I18nextProvider>
+        </ThemeProvider>
+      </ChakraProvider>
+    </>
   );
 };
 
