@@ -2,9 +2,7 @@ package main
 
 import (
 	"context"
-	"embed"
 	"fmt"
-	"io/fs"
 	"log/slog"
 	"net/http"
 	"os"
@@ -25,9 +23,6 @@ import (
 	"github.com/kieranroneill/oarbit/internal/versions"
 	"github.com/kieranroneill/oarbit/internal/vessel"
 )
-
-//go:embed web/dist/*
-var embeddedStaticAssets embed.FS
 
 func main() {
 	// create context for shutdown processes
@@ -67,8 +62,6 @@ func main() {
 
 	e := echo.New()
 
-	staticFiles, err := fs.Sub(embeddedStaticAssets, "web/dist")
-
 	if err != nil {
 		slog.Error(fmt.Sprintf("failed to load static assets: %v", err))
 	}
@@ -102,8 +95,14 @@ func main() {
 	vesselsRouter.GET(_http.SpecificationsPath, vessel.NewGetVesselSpecificationsRoute(database))
 
 	// /app/*
-	e.GET(application.Path, application.NewGetAppRoute(staticFiles))
-	e.GET(fmt.Sprintf("%s/*", application.Path), echo.WrapHandler(http.StripPrefix(fmt.Sprintf("%s/", application.Path), http.FileServer(http.FS(staticFiles)))))
+	if applicationConfig.Environment != "development" {
+		staticFiles := os.DirFS("/app/web/dist")
+
+		e.GET(application.Path, application.NewGetAppRoute(staticFiles))
+		e.GET(fmt.Sprintf("%s/*", application.Path), echo.WrapHandler(
+			http.StripPrefix(fmt.Sprintf("%s/", application.Path), http.FileServer(http.FS(staticFiles))),
+		))
+	}
 
 	// set up server
 	server := echo.StartConfig{
