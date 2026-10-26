@@ -65,6 +65,7 @@ export default {
     welcome: 'Welcome to Oarbit.',
   },
   labels: {
+    back: 'Back',
     battery: 'Battery',
     batteryStatus: 'Show battery status',
     connectionStatus: 'Syncing',
