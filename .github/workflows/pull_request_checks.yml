@@ -8,10 +8,24 @@ env:
 
 jobs:
   ##
-  # test
+  # tests
   ##
 
-  test_libs_utilities:
+  test_go_integration:
+    name: 'Integration Tests: Go'
+    runs-on: ubuntu-latest
+    environment: Development
+    steps:
+      - name: '🛎 Checkout'
+        uses: actions/checkout@v4
+      - name: '🦫 Setup Golang'
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: '🧪 Test'
+        run: make test_go_integration
+
+  test_go_unit:
     name: 'Unit Tests: Go'
     runs-on: ubuntu-latest
     environment: Development
