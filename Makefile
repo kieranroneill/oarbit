@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: dev install install_go_deps install_go_dev_deps install_js_deps format format_go format_js migrations_down_dev migrations_up_dev test test_unit test_go_unit
+.PHONY: dev install install_go_deps install_go_dev_deps install_js_deps format format_go format_js migrations_down_dev migrations_up_dev test test_unit test_go_integration test_go_unit
 
 all: install
 
@@ -83,9 +83,16 @@ migrations_up_dev:
 test:
 	${MAKE} test_unit
 
+test_integration:
+	${MAKE} test_go_integration
+
 test_unit:
 	${MAKE} test_go_unit
 
+test_go_integration:
+	@echo ">>> running go integration tests"
+	./scripts/test_integration.bash
+
 test_go_unit:
 	@echo ">>> running go unit tests"
-	go test -v ./...
+	go test  -tags=unit -count=1 -v ./...

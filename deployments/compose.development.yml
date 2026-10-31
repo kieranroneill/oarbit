@@ -54,7 +54,7 @@ services:
         condition: service_healthy
     environment:
       GOOSE_DRIVER: postgres
-      GOOSE_DBSTRING: 'postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@${POSTGRES_HOST:-postgres}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-oarbit}?sslmode=disable'
+      GOOSE_DBSTRING: 'postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@${POSTGRES_HOST:-postgres}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-oarbit}?sslmode=${POSTGRES_SSL_MODE:-disable}'
     image: kieranroneill/oarbit-migrations-down:development
     networks:
       - oarbit_network_dev
@@ -71,11 +71,9 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_healthy
     environment:
       GOOSE_DRIVER: postgres
-      GOOSE_DBSTRING: 'postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@${POSTGRES_HOST:-postgres}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-oarbit}?sslmode=disable'
+      GOOSE_DBSTRING: 'postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@${POSTGRES_HOST:-postgres}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-oarbit}?sslmode=${POSTGRES_SSL_MODE:-disable}'
     image: kieranroneill/oarbit-migrations-up:development
     networks:
       - oarbit_network_dev

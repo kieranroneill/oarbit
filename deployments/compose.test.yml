@@ -1,0 +1,57 @@
+services:
+  migrations_up:
+    build:
+      context: ../
+      dockerfile: ./build/package/migrations/Dockerfile
+    command: [ 'goose', '--dir', 'migrations', 'up' ]
+    container_name: oarbit_migrations_up_dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      GOOSE_DRIVER: postgres
+      GOOSE_DBSTRING: 'postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-oarbit_test}?sslmode=${POSTGRES_SSL_MODE:-disable}'
+    image: kieranroneill/oarbit-migrations-up:test
+    networks:
+      - oarbit_network_test
+    volumes:
+      - ../migrations:/app/migrations:ro
+
+  postgres:
+    container_name: oarbit_postgres_test
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-oarbit_test}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -d ${POSTGRES_DB:-oarbit_test} -U ${POSTGRES_USER:-postgres}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - oarbit_network_test
+    ports:
+      - '${POSTGRES_PORT:-5433}:5432'
+
+  redis:
+    build:
+      context: ../
+      dockerfile: ./build/package/redis/Dockerfile
+    container_name: oarbit_redis_test
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
+      REDIS_USERNAME: ${REDIS_USERNAME:-redis}
+    healthcheck:
+      test: [ 'CMD-SHELL', 'redis-cli --user ${REDIS_USERNAME:-redis} --pass ${REDIS_PASSWORD:-password} ping | grep PONG' ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - oarbit_network_test
+    ports:
+      - '${REDIS_PORT:-6380}:6379'
+
+networks:
+  oarbit_network_test:
+    name: oarbit_network_test
